@@ -5,16 +5,23 @@ fetch(HOLIDAY_API)
   .then((data) => {
     hideLoading();
     const mainDiv = document.querySelector(".main-container");
+    const isHoliday = data.nextHoliday.isToday;
+    const daysRemaining = data.nextHoliday.daysUntil;
     renderTitle(mainDiv);
-    renderIsHolidayText(mainDiv,data.nextHoliday.isToday);
+    renderIsHolidayText(mainDiv, isHoliday);
+    renderDaysRemaining(mainDiv, isHoliday, daysRemaining);
   })
   .catch((e) => console.log(e));
 
-function renderIsHolidayText(div ,isHoliday) {
+function hideLoading() {
+  document.querySelector(".loading").style.display = "none";
+}
+
+function renderIsHolidayText(div, isHoliday) {
   const pTag = document.createElement("p");
   pTag.textContent = isHoliday ? "SI!" : "NO :(";
-  pTag.classList.add('is-holiday')
-  div.appendChild(pTag)
+  pTag.classList.add("is-holiday");
+  div.appendChild(pTag);
 }
 
 function renderTitle(div) {
@@ -23,7 +30,13 @@ function renderTitle(div) {
   div.appendChild(h1Tag);
 }
 
-function hideLoading() {
-  document.querySelector(".loading").style.display = "none";
+function renderDaysRemaining(div, isHoliday, days) {
+  const remainingDays = document.createElement("p");
+  remainingDays.textContent = `Aun ${days > 1 ? "Faltan" : "Falta"} ${days} ${
+    days > 1 ? "Dias" : "Dia"
+  }`;
+  remainingDays.classList.add("loading");
+  div.appendChild(remainingDays);
 }
 
+function renderDescription(div, isHoliday) {}
