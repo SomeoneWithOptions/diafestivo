@@ -20,7 +20,7 @@ function hideLoading() {
 function renderIsHolidayText(div, isHoliday) {
   const pTag = document.createElement("p");
   pTag.textContent = isHoliday ? "SI!" : "NO :(";
-  pTag.classList.add("is-holiday");
+  pTag.classList.add("normalText");
   div.appendChild(pTag);
 }
 
@@ -31,11 +31,14 @@ function renderTitle(div) {
 }
 
 function renderDaysRemaining(div, isHoliday, days) {
+  if (isHoliday) {
+    return;
+  }
   const remainingDays = document.createElement("p");
   remainingDays.textContent = `Aun ${days > 1 ? "Faltan" : "Falta"} ${days} ${
     days > 1 ? "Dias" : "Dia"
   }`;
-  remainingDays.classList.add("loading");
+  remainingDays.classList.add("normalText");
   div.appendChild(remainingDays);
 }
 
