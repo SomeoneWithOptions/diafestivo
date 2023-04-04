@@ -22,9 +22,11 @@ function hideLoading() {
   document.querySelector(".loading").style.display = "none";
 }
 function renderTitle(div) {
-  const h1Tag = document.createElement("h1");
-  h1Tag.textContent = "¿Es Hoy Festivo en Colombia?";
-  div.appendChild(h1Tag);
+  const titleTag = document.createElement("p");
+  titleTag.textContent = "¿Es Hoy Festivo en Colombia?";
+  titleTag.classList.add('title')
+  titleTag.classList.add('yellow')
+  div.appendChild(titleTag);
 }
 
 function renderIsHolidayText(div, isHoliday)
@@ -32,6 +34,7 @@ function renderIsHolidayText(div, isHoliday)
   const pTag = document.createElement("p");
   pTag.textContent = isHoliday ? "SI!" : "NO :(";
   pTag.classList.add("normalText");
+  pTag.classList.add('blue')
   div.appendChild(pTag);
 }
 
@@ -102,5 +105,6 @@ function renderCelebration(div, celebrationName, isHoliday) {
     isHoliday ? "Celebramos" : "Celebraremos"
   } ${celebrationName}`;
   celebration.classList.add("normalText");
+  celebration.classList.add('red')
   div.appendChild(celebration);
 }
