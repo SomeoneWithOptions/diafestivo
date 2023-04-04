@@ -1,5 +1,5 @@
 .main-container {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Inter', sans-serif;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -11,8 +11,17 @@
 h1 {
   font-size: clamp(2rem, 4vw, 5rem);
   text-align: center;
+  font-weight: 700;
 }
 
 .normalText {
   font-size: clamp(1.5rem, 3vw, 2rem);
+  text-align: center;
+  font-weight: 400;
+}
+
+.thin {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 200;
+  text-align: center;
 }

@@ -44,7 +44,7 @@ function renderDaysRemaining(div, isHoliday, days)
   remainingDays.textContent = `Aun ${days > 1 ? "Faltan" : "Falta"} ${days} ${
     days > 1 ? "Dias" : "Dia"
   }`;
-  remainingDays.classList.add("normalText");
+  remainingDays.classList.add("thin");
   div.appendChild(remainingDays);
 }
 
@@ -92,7 +92,7 @@ function renderDescription(div, isHoliday, festiveDate) {
   description.textContent = `El proximo festivo es el dia ${formatDateToText(
     festiveDate
   )}`;
-  description.classList.add("normalText");
+  description.classList.add("thin");
   div.appendChild(description);
 }
 
