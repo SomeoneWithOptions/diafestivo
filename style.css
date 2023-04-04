@@ -1,5 +1,5 @@
 .main-container {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -12,54 +12,59 @@
   font-size: clamp(3rem, 3vw, 2rem);
   text-align: center;
   font-weight: 400;
-  position : relative
+  position: relative;
 }
 
 .yellow::before {
-  position : absolute;
-  top : -2%;
-  bottom : 0 ;
-  left : -2% ; 
-  right : 0 ;
+  position: absolute;
+  top: -2%;
+  bottom: 0;
+  left: -2%;
+  right: 0;
   width: 30%;
   height: 110%;
-  content : '';
+  content: "";
   background-color: #f9dc4d;
   z-index: -1;
+  border-top-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }
 
 .blue::before {
-  position : absolute;
-  top : -2%;
-  bottom : 0 ;
-  left : -20% ; 
-  right : 0 ;
+  position: absolute;
+  top: -2%;
+  bottom: 0;
+  left: -20%;
+  right: 0;
   width: 90%;
   height: 100%;
-  content : '';
+  content: "";
   background-color: #1e6ceac8;
   z-index: -1;
+  border-top-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }
 
 .red::before {
-  position : absolute;
-  top : -2%;
-  bottom : 0 ;
-  left : -2% ; 
-  right : 0 ;
+  position: absolute;
+  top: -2%;
+  bottom: 0;
+  left: -2%;
+  right: 0;
   width: 30%;
   height: 110%;
-  content : '';
+  content: "";
   background-color: #d20d24ad;
   z-index: -1;
+  border-top-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }
-
 
 .normalText {
   font-size: clamp(1.5rem, 3vw, 2rem);
   text-align: center;
   font-weight: 400;
-  position : relative;
+  position: relative;
   margin-top: 2rem;
 }
 
@@ -67,28 +72,26 @@
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
   font-weight: 200;
   text-align: center;
-  padding : 0 1rem ; 
+  padding: 0 1rem;
 }
 
-footer  {
+footer {
   position: absolute;
-  bottom : 20px;
-  right : 20px ;
+  bottom: 20px;
+  right: 20px;
   font-weight: 700;
 }
 
 footer a {
   text-decoration: none;
-  color : black; 
+  color: black;
 }
 
 @media only screen and (max-width: 700px) {
-  .yellow::before{
-    left : 5% ;
+  .yellow::before {
+    left: 5%;
   }
   .normalText {
     margin-top: 3rem;
   }
 }
-
-

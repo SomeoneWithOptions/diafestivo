@@ -24,27 +24,25 @@ function hideLoading() {
 function renderTitle(div) {
   const titleTag = document.createElement("p");
   titleTag.textContent = "¿Es Hoy Festivo en Colombia?";
-  titleTag.classList.add('title')
-  titleTag.classList.add('yellow')
+  titleTag.classList.add("title");
+  titleTag.classList.add("yellow");
   div.appendChild(titleTag);
 }
 
-function renderIsHolidayText(div, isHoliday)
-{
+function renderIsHolidayText(div, isHoliday) {
   const pTag = document.createElement("p");
   pTag.textContent = isHoliday ? "SI!" : "NO :(";
   pTag.classList.add("normalText");
-  pTag.classList.add('blue')
+  pTag.classList.add("blue");
   div.appendChild(pTag);
 }
 
-function renderDaysRemaining(div, isHoliday, days)
-{
+function renderDaysRemaining(div, isHoliday, days) {
   if (isHoliday) {
     return;
   }
   const remainingDays = document.createElement("p");
-  remainingDays.textContent = `Aun ${days > 1 ? "Faltan" : "Falta"} ${days} ${
+  remainingDays.textContent = `Aún ${days > 1 ? "Faltan" : "Falta"} ${days} ${
     days > 1 ? "Dias" : "Dia"
   }`;
   remainingDays.classList.add("thin");
@@ -92,7 +90,7 @@ function renderDescription(div, isHoliday, festiveDate) {
     return;
   }
   const description = document.createElement("p");
-  description.textContent = `El proximo festivo es el dia ${formatDateToText(
+  description.textContent = `El próximo festivo es el dia ${formatDateToText(
     festiveDate
   )}`;
   description.classList.add("thin");
@@ -105,6 +103,6 @@ function renderCelebration(div, celebrationName, isHoliday) {
     isHoliday ? "Celebramos" : "Celebraremos"
   } ${celebrationName}`;
   celebration.classList.add("normalText");
-  celebration.classList.add('red')
+  celebration.classList.add("red");
   div.appendChild(celebration);
 }
