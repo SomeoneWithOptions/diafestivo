@@ -8,20 +8,19 @@
   flex-direction: column;
 }
 
-.title,
-.normalText {
-  text-align: center;
-  font-weight: 400;
-  position: relative;
-}
-
 .title {
-  font-size: clamp(3rem, 3vw, 2rem);
+  text-align: center;
+  font-weight: 700;
+  position: relative;
+  font-size: clamp(3rem, 4vw, 4rem);
 }
 
 .normalText {
   font-size: clamp(1.5rem, 3vw, 2rem);
-  margin-top: 2rem;
+  text-align: center;
+  position: relative;
+  font-weight: 400;
+  /* border : 1px solid black; */
 }
 
 .yellow::before,
@@ -43,6 +42,15 @@
   background-color: #d20d24ad;
 }
 
+.blue {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.red {
+  margin-top: 1rem;
+}
+
 .blue::before {
   position: absolute;
   inset: -2% 0 0 -20%;
@@ -56,9 +64,11 @@
 
 .thin {
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-  font-weight: 200;
   text-align: center;
   padding: 0 1rem;
+  font-family: "agenda", sans-serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 .gif {
@@ -71,7 +81,6 @@
 }
 
 .gifContainer {
-  /* border : 1px solid black ; */
   position: relative;
 }
 /* .gifContainer::before {
@@ -99,7 +108,6 @@ footer a {
     inset: -2% 0 0 5%;
   }
   .normalText {
-    margin-top: 3rem;
   }
   .gif {
     max-height: 250px;
