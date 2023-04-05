@@ -1,4 +1,5 @@
 const HOLIDAY_API = "https://api.diafestivo.co/";
+const GIF_API = "https://api.diafestivo.co/gif";
 
 fetch(HOLIDAY_API)
   .then((r) => r.json())
@@ -74,17 +75,13 @@ function renderCelebration(div, celebrationName, isHoliday) {
 
 function renderGifElement(isHoliday) {
   if (!isHoliday) return;
-  const GIPHY_KEY = "xLFs2IDX4pQXpwYOPtULufnytvQqveV8";
-  const GIPHY_QUERY = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_KEY}&tag=dancing&rating=g`;
-
-  fetch(GIPHY_QUERY)
-    .then((r) => r.json())
+  fetch(GIF_API)
+    .then((r) => r.text())
     .then((data) => {
       const mainContainer = document.querySelector(".main-container");
       const gifContainer = document.createElement("div");
-
       const gifElement = document.createElement("img");
-      gifElement.src = data.data.images.original.url;
+      gifElement.src = data;
       gifContainer.classList.add("gifContainer");
       gifElement.classList.add("gif");
       gifContainer.appendChild(gifElement);
