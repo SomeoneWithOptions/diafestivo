@@ -44,7 +44,7 @@ function renderDaysRemaining(div, isHoliday, days) {
   }
   const remainingDays = document.createElement("p");
   remainingDays.textContent = `Aún ${days > 1 ? "Faltan" : "Falta"} ${days} ${
-    days > 1 ? "Dias" : "Dia"
+    days > 1 ? "Días" : "Día"
   }`;
   remainingDays.classList.add("thin");
   div.appendChild(remainingDays);
@@ -55,7 +55,7 @@ function renderDescription(div, isHoliday, festiveDate) {
     return;
   }
   const description = document.createElement("p");
-  description.textContent = `El próximo festivo es el dia ${formatDateToText(
+  description.textContent = `El próximo festivo es el día ${formatDateToText(
     festiveDate
   )}`;
   description.classList.add("thin");
