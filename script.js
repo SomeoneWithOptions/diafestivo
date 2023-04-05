@@ -15,6 +15,7 @@ fetch(HOLIDAY_API)
     renderDaysRemaining(mainContainer, isHoliday, daysRemaining);
     renderDescription(mainContainer, isHoliday, nextDate);
     renderCelebration(mainContainer, celebrationName);
+    renderGifElement(isHoliday);
   })
   .catch((e) => console.log(e));
 
@@ -69,6 +70,26 @@ function renderCelebration(div, celebrationName, isHoliday) {
   } ${celebrationName}`;
   celebration.classList.add("normalText", "red");
   div.appendChild(celebration);
+}
+
+function renderGifElement(isHoliday) {
+  if (!isHoliday) return;
+  const GIPHY_KEY = "xLFs2IDX4pQXpwYOPtULufnytvQqveV8";
+  const GIPHY_QUERY = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_KEY}&tag=dancing&rating=g`;
+
+  fetch(GIPHY_QUERY)
+    .then((r) => r.json())
+    .then((data) => {
+      const mainContainer = document.querySelector(".main-container");
+      const gifContainer = document.createElement("div");
+
+      const gifElement = document.createElement("img");
+      gifElement.src = data.data.images.original.url;
+      gifContainer.classList.add("gifContainer");
+      gifElement.classList.add("gif");
+      gifContainer.appendChild(gifElement);
+      mainContainer.appendChild(gifContainer);
+    });
 }
 
 function formatDateToText(dateStr) {
