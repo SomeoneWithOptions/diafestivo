@@ -15,7 +15,7 @@ fetch(HOLIDAY_API)
     renderIsHolidayText(mainContainer, isHoliday);
     renderDaysRemaining(mainContainer, isHoliday, daysRemaining);
     renderDescription(mainContainer, isHoliday, nextDate);
-    renderCelebration(mainContainer, celebrationName);
+    renderCelebration(mainContainer, celebrationName,isHoliday);
     renderGifElement(isHoliday);
   })
   .catch((e) => console.log(e));

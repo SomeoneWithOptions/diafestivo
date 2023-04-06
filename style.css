@@ -40,6 +40,7 @@
 
 .red::before {
   background-color: #d20d24ad;
+  width: 40%;
 }
 
 .blue {
@@ -106,8 +107,6 @@ footer a {
 @media only screen and (max-width: 700px) {
   .yellow::before {
     inset: -2% 0 0 5%;
-  }
-  .normalText {
   }
   .gif {
     max-height: 250px;
