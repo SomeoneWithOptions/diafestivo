@@ -35,11 +35,11 @@
 }
 
 .yellow::before {
-  background-color: #f9dc4d;
+  background-color: #f9dc4dcf;
 }
 
 .red::before {
-  background-color: #d20d24ad;
+  background-color: #d20d2498;
   width: 40%;
 }
 
@@ -59,7 +59,7 @@
   height: 100%;
   content: "";
   z-index: -1;
-  background-color: #1e6ceac8;
+  background-color: #1e6cea9b;
   border-radius: 1rem 0 1rem 0;
 }
 
