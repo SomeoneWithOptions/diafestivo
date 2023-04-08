@@ -8,23 +8,41 @@
   flex-direction: column;
 }
 
-.title {
+.title-text {
   text-align: center;
   font-weight: 700;
   position: relative;
   font-size: clamp(3rem, 4vw, 4rem);
 }
 
-.normalText {
+.normal-text {
   font-size: clamp(1.5rem, 3vw, 2rem);
   text-align: center;
   position: relative;
   font-weight: 400;
-  /* border : 1px solid black; */
 }
 
-.yellow::before,
-.red::before {
+.thin-text {
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  text-align: center;
+  padding: 0 1rem;
+
+  font-family: "urbane", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.blue-accent {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.red-accent {
+  margin-top: 1rem;
+}
+
+.yellow-accent::before,
+.red-accent::before {
   position: absolute;
   inset: -2% 0 0 -2%;
   width: 30%;
@@ -34,25 +52,16 @@
   border-radius: 1rem 0 1rem 0;
 }
 
-.yellow::before {
+.yellow-accent::before {
   background-color: #f9dc4dcf;
 }
 
-.red::before {
+.red-accent::before {
   background-color: #d20d2498;
-  width: 40%;
+  width: 35%;
 }
 
-.blue {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-.red {
-  margin-top: 1rem;
-}
-
-.blue::before {
+.blue-accent::before {
   position: absolute;
   inset: -2% 0 0 -20%;
   width: 90%;
@@ -61,15 +70,6 @@
   z-index: -1;
   background-color: #1e6cea9b;
   border-radius: 1rem 0 1rem 0;
-}
-
-.thin {
-  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-  text-align: center;
-  padding: 0 1rem;
-  font-family: "agenda", sans-serif;
-  font-weight: 300;
-  font-style: normal;
 }
 
 .gif {
@@ -84,13 +84,6 @@
 .gifContainer {
   position: relative;
 }
-/* .gifContainer::before {
-  content: "Powered By GIPHY";
-  position : absolute; 
-  bottom: -.5rem;
-  right: 0;
-  font-size: .7rem;
-} */
 
 footer {
   position: absolute;
@@ -105,7 +98,7 @@ footer a {
 }
 
 @media only screen and (max-width: 700px) {
-  .yellow::before {
+  .yellow-accent::before {
     inset: -2% 0 0 5%;
   }
   .gif {
