@@ -1,7 +1,7 @@
 # Festivo en Colombia
 # diafestivo.co 
 
-This webpage contains the data for a simple web page that provides information about whether today is a holiday in Colombia. The web page displays the following information:
+This webpage contains information about whether today is a holiday in Colombia. The web page displays the following information:
 
 - Is today a holiday in Colombia? (Yes/No)
 - How many days are left until the next holiday?
