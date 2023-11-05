@@ -10,7 +10,7 @@ This webpage contains information about whether today is a holiday in Colombia. 
 ## API info 
 
 - API endpoints : [api.diafestivo.co](https://api.diafestivo.co)
-- AI Github Repo : [api.diafestivo.co](https://github.com/SomeoneWithOptions/api.diafestivo.co)
+- API Github Repo : [api.diafestivo.co](https://github.com/SomeoneWithOptions/api.diafestivo.co)
 
 ## License
 
