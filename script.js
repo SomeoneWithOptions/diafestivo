@@ -1,1 +1,1 @@
-const c=document.getElementById("main-container");fetch("https://dev.diafestivo.co/template").then(t=>t.text()).then(t=>{c.innerHTML=t});
+const c=document.getElementById("main-container");fetch("https://api.diafestivo.co/template").then(t=>t.text()).then(t=>{c.innerHTML=t});
