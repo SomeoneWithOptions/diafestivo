@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Montserrat:wght@400;600&display=swap"
     rel="stylesheet">
 
+  <link rel="preload" as="style" href="https://d9jl6imsrch2c.cloudfront.net/style.css">
   <link rel="stylesheet" href="https://d9jl6imsrch2c.cloudfront.net/style.css">
 
   <title>Festivo Colombia</title>
@@ -31,6 +32,8 @@
   </footer>
 </body>
 
-<script src="./script.js"></script>
+<script>
+  const c = document.getElementById("main-container"); fetch("https://api.diafestivo.co/template").then(t => t.text()).then(t => { c.innerHTML = t });
+</script>
 
 </html>
