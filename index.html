@@ -8,7 +8,7 @@
   <meta name="description"
     content="This webpage displays the next holiday for colombia and how long in days is the holiday away">
 
-  <link rel="icon" type="image/png" href="https://d9jl6imsrch2c.cloudfront.net/favicon.png">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
 
   <link rel="preconnect" href="https://api.diafestivo.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,8 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Montserrat:wght@400;600&display=swap"
     rel="stylesheet">
 
-  <link rel="preload" as="style" href="https://d9jl6imsrch2c.cloudfront.net/style.css">
-  <link rel="stylesheet" href="https://d9jl6imsrch2c.cloudfront.net/style.css">
+  <link rel="stylesheet" href="/style.css">
 
   <title>Festivo Colombia</title>
 
@@ -34,7 +33,7 @@
   </footer>
 </body>
 
-<script async>
+<script defer>
   const c = document.getElementById("main-container"); fetch("https://api.diafestivo.co/template").then(t => t.text()).then(t => { c.innerHTML = t });
 </script>
 
