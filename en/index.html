@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="This webpage displays the next holiday for colombia and how long in days is the holiday away">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://api.diafestivo.co">
+  <link rel="stylesheet" href="/style.css">
+  <title>Holiday In Colombia</title>
+</head>
+<body>
+  <main>
+    <div id="main-container" class="main-container">
+      <p class="normal-text loading">Loading...</p>
+    </div>
+  </main>
+  <footer>
+    <a href="https://www.sanetomore.com/" target="_blank"> ? </a>
+  </footer>
+</body>
+<script defer>
+  const c = document.getElementById("main-container");
+  fetch("http://localhost:3002/en")
+    .then(t => t.text())
+    .then(t => { c.innerHTML = t });
+</script>
+</html>
