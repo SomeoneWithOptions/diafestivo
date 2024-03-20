@@ -23,7 +23,7 @@
 </body>
 <script defer>
   const c = document.getElementById("main-container");
-  fetch("http://localhost:3002/en")
+  fetch("https://api.diafestivo.co/en")
     .then(t => t.text())
     .then(t => { c.innerHTML = t });
 </script>
