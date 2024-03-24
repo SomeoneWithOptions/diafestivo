@@ -48,16 +48,6 @@
     .then(res => res.json())
     .then(d => {
       clap.innerHTML = `${d.result} <img src="./assets/clapping.png">`
-      clap.classList.add('fade-in');
-      sm.classList.add('fade-in');
-
-      setTimeout(() => {
-        clap.style.opacity = 1
-        sm.style.opacity = 1
-        clap.classList.remove('fade-in')
-        sm.classList.remove('fade-in')
-
-      }, 900)
     })
     .catch(e => clap.innerHTML = e);
 

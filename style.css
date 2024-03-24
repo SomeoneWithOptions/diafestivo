@@ -206,10 +206,6 @@ footer a {
 
 }
 
-.footer__claps {
-    opacity: 0;
-}
-
 .footer__message img {
     width: 20px;
 }
@@ -257,22 +253,6 @@ footer a {
         padding: .8rem 1rem;
         top: 95dvh;
     }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in {
-    animation-name: fadeIn;
-    animation-duration: 100ms;
-    animation-fill-mode: forwards;
 }
 
 @keyframes grow-shrink {
