@@ -30,42 +30,10 @@
   </footer>
 </body>
 <script defer>
-  const c = document.getElementById("main-container");
-  const clap = document.getElementById("claps");
-  const sm = document.getElementById("sm");
-
-  fetch("https://api.diafestivo.co/template")
-    .then(t => t.text())
-    .then(t => { c.innerHTML = t })
-    .catch(e => c.innerHTML = e);
-
-  fetch('https://outgoing-oarfish-30264.upstash.io/get/diafestivo:claps', {
-    headers: {
-      'Authorization': 'Bearer AnY4ACQgMWEyNDdlNGQtYWM4MC00NmE0LWFlMmYtYjYwZWEwMDQwNWY3SDsn6GERJzrVMJCt_ctMiprb3gGmUTHr49WHHdIJVvk=',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(res => res.json())
-    .then(d => {
-      clap.innerHTML = `${d.result} <img src="./assets/clapping.png">`
-    })
-    .catch(e => clap.innerHTML = e);
-
-  function addClap(e) {
-    let r = Number(clap.innerText) + 1
-    clap.classList.add('jump')
-
-    setTimeout(() => {
-      clap.classList.remove('jump')
-    }, 200)
-
-    clap.innerHTML = `${r} <img src="./assets/clapping.png">`
-
-    fetch("https://api.diafestivo.co/clap")
-      .then(r => r.text())
-      .then(d => console.log(d))
-  }
-
+  const c = document.getElementById("main-container"), cl = document.getElementById("claps");
+  fetch("https://api.diafestivo.co/template").then(t => t.text()).then(t => { c.innerHTML = t }).catch(e => c.innerHTML = e);
+  fetch('https://outgoing-oarfish-30264.upstash.io/get/diafestivo:claps', { headers: { 'Authorization': 'Bearer AnY4ACQgMWEyNDdlNGQtYWM4MC00NmE0LWFlMmYtYjYwZWEwMDQwNWY3SDsn6GERJzrVMJCt_ctMiprb3gGmUTHr49WHHdIJVvk=', 'Content-Type': 'application/json' } }).then(res => res.json()).then(d => { cl.innerHTML = `${d.result} <img src="./assets/clapping.png">` }).catch(e => cl.innerHTML = e);
+  function addClap(e) { let r = Number(cl.innerText) + 1; cl.classList.add('jump'); setTimeout(() => { cl.classList.remove('jump') }, 200); cl.innerHTML = `${r} <img src="./assets/clapping.png">`; fetch("https://api.diafestivo.co/clap").then(r => r.text()).then(d => console.log(d)) }
 </script>
 
 </html>
