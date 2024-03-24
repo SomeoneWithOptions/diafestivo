@@ -71,7 +71,9 @@
 
     clap.innerHTML = `${r} <img src="./assets/clapping.png">`
 
-    fetch("https://api.diafestivo.co/addclap") 
+    fetch("https://api.diafestivo.co/clap")
+      .then(r => r.text())
+      .then(d => console.log(d))
   }
 
 </script>
