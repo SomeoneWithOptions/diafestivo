@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,6 +12,7 @@
   <link rel="stylesheet" href="/style.css">
   <title>Holiday In Colombia</title>
 </head>
+
 <body>
   <main>
     <div id="main-container" class="main-container">
@@ -18,13 +20,19 @@
     </div>
   </main>
   <footer>
-    <a href="https://www.sanetomore.com/" target="_blank"> ? </a>
+    <a class="footer__claps" id="claps" onclick="addClap()"> 0
+      <img src="../assets/clapping.png">
+    </a>
+    <a class="footer__message" id="sm" href="https://www.sanetomore.com/">
+      <img src="../assets/contact.png">
+    </a>
   </footer>
 </body>
 <script defer>
-  const c = document.getElementById("main-container");
-  fetch("https://api.diafestivo.co/en")
-    .then(t => t.text())
-    .then(t => { c.innerHTML = t });
+  const c = document.getElementById("main-container"), cl = document.getElementById("claps");
+  fetch("https://api.diafestivo.co/en").then(t => t.text()).then(t => { c.innerHTML = t }).catch(e => c.innerHTML = e);
+  fetch('https://outgoing-oarfish-30264.upstash.io/get/diafestivo:claps', { headers: { 'Authorization': 'Bearer AnY4ACQgMWEyNDdlNGQtYWM4MC00NmE0LWFlMmYtYjYwZWEwMDQwNWY3SDsn6GERJzrVMJCt_ctMiprb3gGmUTHr49WHHdIJVvk=', 'Content-Type': 'application/json' } }).then(res => res.json()).then(d => { cl.innerHTML = `${d.result} <img src="../assets/clapping.png">` }).catch(e => cl.innerHTML = e);
+  function addClap(e) { let r = Number(cl.innerText) + 1; cl.classList.add('jump'); setTimeout(() => { cl.classList.remove('jump') }, 200); cl.innerHTML = `${r} <img src="../assets/clapping.png">`; fetch("https://api.diafestivo.co/clap").then(r => r.text()).then(d => console.log(d)) }
 </script>
+
 </html>
