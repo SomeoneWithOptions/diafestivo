@@ -21,15 +21,15 @@
   </main>
   <footer>
     <a class="footer__claps" id="claps" onclick="addClap()"> 0
-      <img src="./assets/clapping.png">
+      <img src="./assets/clapping.png" alt="cheering icon">
     </a>
     <a class="footer__message" id="sm" href="https://www.sanetomore.com/">
-      <img src="./assets/contact.png">
+      <img src="./assets/contact.png" alt="contact icon">
     </a>
   </footer>
 </body>
 <script defer>
-  const u = "https://api.diafestivo.co", c = document.getElementById("main-container"), cl = document.getElementById("claps"); function addClap(t) { let e = Number(cl.innerText) + 1; cl.classList.add("jump"), setTimeout(() => { cl.classList.remove("jump") }, 200), cl.innerHTML = `${e} <img src="./assets/clapping.png">`, fetch(`${u}/clap`, { method: "POST" }).then(t => t.text()).then(t => console.log(t)) } fetch(`${u}/template`).then(t => t.text()).then(t => { c.innerHTML = t }).catch(t => c.innerHTML = t), fetch(`${u}/clap`).then(t => t.text()).then(t => { cl.innerHTML = `${t} <img src="./assets/clapping.png">` }).catch(t => cl.innerHTML = t);
+  const p = '<img src="./assets/clapping.png" alt="contact icon">', u = "https://api.diafestivo.co", c = document.getElementById("main-container"), d = document.getElementById("claps"); function addClap(t) { let e = Number(d.innerText) + 1; d.classList.add("jump"), setTimeout(() => { d.classList.remove("jump") }, 200), d.innerHTML = `${e} ${p}`, fetch(`${u}/clap`, { method: "POST" }).then(t => t.text()).then(t => console.log(t)) } fetch(`${u}/template`).then(t => t.text()).then(t => { c.innerHTML = t }).catch(t => c.innerHTML = t), fetch(`${u}/clap`).then(t => t.text()).then(t => { d.innerHTML = `${t} ${p}` }).catch(t => d.innerHTML = t);
 </script>
 
 </html>
