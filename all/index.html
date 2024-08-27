@@ -27,7 +27,7 @@
     </footer>
 </body>
 <script defer>
-    const p = '<img src="../assets/clap.webp" alt="contact icon" width="20px" height="20px">', u = "https://pubmcter2m.us-east-1.awsapprunner.com", c = document.getElementById("main-container"), i = document.getElementById("loading"); function addClap(t) { let e = Number(d.innerText) + 1; d.classList.add("jump"), setTimeout(() => { d.classList.remove("jump") }, 200), d.innerHTML = `${e} ${p}`, fetch(`${u}/clap`, { method: "POST" }).then(t => t.text()).then(t => console.log(t)) } d = document.getElementById("claps"), fetch(`${u}/left`).then(t => t.text()).then(t => { i.style.display = "none", c.style.display = "flex", c.classList.add("animation__fade-in"), c.innerHTML = t }).catch(t => c.innerHTML = t), fetch(`${u}/clap`).then(t => t.text()).then(t => { d.innerHTML = `${t} ${p}` }).catch(t => d.innerHTML = t);
+    const p = '<img src="../assets/clap.webp" alt="contact icon" width="20px" height="20px">', u = "https://api.diafestivo.co", c = document.getElementById("main-container"), i = document.getElementById("loading"); function addClap(t) { let e = Number(d.innerText) + 1; d.classList.add("jump"), setTimeout(() => { d.classList.remove("jump") }, 200), d.innerHTML = `${e} ${p}`, fetch(`${u}/clap`, { method: "POST" }).then(t => t.text()).then(t => console.log(t)) } d = document.getElementById("claps"), fetch(`${u}/left`).then(t => t.text()).then(t => { i.style.display = "none", c.style.display = "flex", c.classList.add("animation__fade-in"), c.innerHTML = t }).catch(t => c.innerHTML = t), fetch(`${u}/clap`).then(t => t.text()).then(t => { d.innerHTML = `${t} ${p}` }).catch(t => d.innerHTML = t);
 </script>
 
 <style>
