@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Optimizador de Vacaciones – COL</title>
+<style>
+body{font-family:sans-serif;max-width:600px;margin:0 auto;padding:1rem}
+label{display:block;margin:.5rem 0}
+#results{margin-top:1rem;font-weight:600}
+</style>
+</head>
+<body>
+<h1>Optimizador de Vacaciones</h1>
+<form id="vacForm">
+<label>Días de vacaciones <input type="number" id="vacDays" min="1" required></label>
+<label>Inicio <input type="date" id="start"></label>
+<label>Fin <input type="date" id="end"></label>
+<button type="submit">Calcular</button>
+</form>
+<div id="results"></div>
+<script>
+const t=new Date(),sd=document.getElementById('start'),ed=document.getElementById('end');
+sd.value=t.toISOString().slice(0,10);
+ed.value=new Date(t.getFullYear(),11,31).toISOString().slice(0,10);
+document.getElementById('vacForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const v=parseInt(document.getElementById('vacDays').value,10);
+ const s=new Date(sd.value),f=new Date(ed.value);
+ const yrs=[...Array(f.getFullYear()-s.getFullYear()+1)].map((_,i)=>s.getFullYear()+i);
+ const hol=new Set();
+ for(const y of yrs){
+  const r=await fetch(`https://api.diafestivo.co/make?year=${y}`).then(x=>x.json()).catch(()=>[]);
+  (r.holidays||r).forEach(h=>{const d=new Date(h.date);if(d>=s&&d<=f)hol.add(d.toISOString().slice(0,10));});
+ }
+ const isRest=d=>d.getDay()>4||hol.has(d.toISOString().slice(0,10));
+ const cal=[];for(let d=new Date(s);d<=f;d.setDate(d.getDate()+1))cal.push(new Date(d));
+ const best=[];
+ for(let i=0;i<cal.length;i++){
+  if(isRest(cal[i]))continue;
+  let used=0,j=i;
+  while(j<cal.length&&used<v){if(!isRest(cal[j]))used++;j++;}
+  if(used<v)break;
+  let a=i,b=j-1;
+  while(a>0&&isRest(cal[a-1]))a--;
+  while(b<cal.length-1&&isRest(cal[b+1]))b++;
+  best.push({s:cal[a],e:cal[b],l:b-a+1});
+ }
+ best.sort((x,y)=>y.l-x.l||x.s-y.s);
+ document.getElementById('results').innerHTML=best.slice(0,5).map(r=>`${r.s.toISOString().slice(0,10)} → ${r.e.toISOString().slice(0,10)} (${r.l} días)`).join('<br>')||'Sin rangos óptimos';
+});
+</script>
+</body>
+</html>
