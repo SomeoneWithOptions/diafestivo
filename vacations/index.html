@@ -2,14 +2,30 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Optimizador de Vacaciones – COL</title>
 <style>
-body{font-family:sans-serif;max-width:600px;margin:0 auto;padding:1rem}
-label{display:block;margin:.5rem 0}
-#results{margin-top:1rem;font-weight:600}
+@font-face{font-family:Int;font-weight:700;src:url("../assets/fonts/Inter-Bold.ttf") format("truetype");font-display:swap}
+@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+:root{--shadow-color:0deg 0% 0%;--shadow-elevation-low:1px 1px 1.1px hsl(var(--shadow-color)/.47),5px 5px 5.3px -5px hsl(var(--shadow-color)/.23);--brand:#1976d2}
+*,::after,::before{box-sizing:border-box}
+*{margin:0;padding:0}
+body{font-family:Int;background:#fff;color:#000;line-height:1.4}
+.main-container{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:2rem 1rem;font-family:Int;font-weight:700;gap:2rem}
+form{display:flex;flex-direction:column;gap:1rem;width:100%;max-width:480px}
+label{font-family:Mont;font-weight:600;font-size:.95rem;display:flex;flex-direction:column;gap:.4rem}
+input,button{padding:.8rem 1rem;font-size:1rem;border:1px solid #000;border-radius:.5rem;font-family:Mont}
+button{background:var(--brand);color:#fff;font-weight:600;cursor:pointer;box-shadow:var(--shadow-elevation-low);transition:opacity .2s}
+button:hover{opacity:.9}
+#results{font-family:Mont;font-size:1.1rem;font-weight:600;text-align:center;display:flex;flex-direction:column;gap:.7rem}
+@media only screen and (max-width:768px){
+.main-container{padding-top:3rem;padding-bottom:3rem}
+}
 </style>
 </head>
 <body>
+<div class="main-container">
 <h1>Optimizador de Vacaciones</h1>
 <form id="vacForm">
 <label>Días de vacaciones <input type="number" id="vacDays" min="1" required></label>
@@ -18,36 +34,37 @@ label{display:block;margin:.5rem 0}
 <button type="submit">Calcular</button>
 </form>
 <div id="results"></div>
+</div>
 <script>
-const t=new Date(),sd=document.getElementById('start'),ed=document.getElementById('end');
-sd.value=t.toISOString().slice(0,10);
-ed.value=new Date(t.getFullYear(),11,31).toISOString().slice(0,10);
+const t=new Date(),sd=document.getElementById('start'),ed=document.getElementById('end')
+sd.value=t.toISOString().slice(0,10)
+ed.value=new Date(t.getFullYear(),11,31).toISOString().slice(0,10)
 document.getElementById('vacForm').addEventListener('submit',async e=>{
- e.preventDefault();
- const v=parseInt(document.getElementById('vacDays').value,10);
- const s=new Date(sd.value),f=new Date(ed.value);
- const yrs=[...Array(f.getFullYear()-s.getFullYear()+1)].map((_,i)=>s.getFullYear()+i);
- const hol=new Set();
+ e.preventDefault()
+ const v=parseInt(document.getElementById('vacDays').value,10)
+ const s=new Date(sd.value),f=new Date(ed.value)
+ const yrs=[...Array(f.getFullYear()-s.getFullYear()+1)].map((_,i)=>s.getFullYear()+i)
+ const hol=new Set()
  for(const y of yrs){
-  const r=await fetch(`https://api.diafestivo.co/make?year=${y}`).then(x=>x.json()).catch(()=>[]);
-  (r.holidays||r).forEach(h=>{const d=new Date(h.date);if(d>=s&&d<=f)hol.add(d.toISOString().slice(0,10));});
+  const r=await fetch(`https://api.diafestivo.co/make?year=${y}`).then(x=>x.json()).catch(()=>[])
+  ;(r.holidays||r).forEach(h=>{const d=new Date(h.date);if(d>=s&&d<=f)hol.add(d.toISOString().slice(0,10))})
  }
- const isRest=d=>d.getDay()>4||hol.has(d.toISOString().slice(0,10));
- const cal=[];for(let d=new Date(s);d<=f;d.setDate(d.getDate()+1))cal.push(new Date(d));
- const best=[];
+ const isRest=d=>d.getDay()>4||hol.has(d.toISOString().slice(0,10))
+ const cal=[];for(let d=new Date(s);d<=f;d.setDate(d.getDate()+1))cal.push(new Date(d))
+ const best=[]
  for(let i=0;i<cal.length;i++){
-  if(isRest(cal[i]))continue;
-  let used=0,j=i;
-  while(j<cal.length&&used<v){if(!isRest(cal[j]))used++;j++;}
-  if(used<v)break;
-  let a=i,b=j-1;
-  while(a>0&&isRest(cal[a-1]))a--;
-  while(b<cal.length-1&&isRest(cal[b+1]))b++;
-  best.push({s:cal[a],e:cal[b],l:b-a+1});
+  if(isRest(cal[i]))continue
+  let used=0,j=i
+  while(j<cal.length&&used<v){if(!isRest(cal[j]))used++;j++}
+  if(used<v)break
+  let a=i,b=j-1
+  while(a>0&&isRest(cal[a-1]))a--
+  while(b<cal.length-1&&isRest(cal[b+1]))b++
+  best.push({s:cal[a],e:cal[b],l:b-a+1})
  }
- best.sort((x,y)=>y.l-x.l||x.s-y.s);
- document.getElementById('results').innerHTML=best.slice(0,5).map(r=>`${r.s.toISOString().slice(0,10)} → ${r.e.toISOString().slice(0,10)} (${r.l} días)`).join('<br>')||'Sin rangos óptimos';
-});
+ best.sort((x,y)=>y.l-x.l||x.s-y.s)
+ document.getElementById('results').innerHTML=best.slice(0,5).map(r=>`${r.s.toISOString().slice(0,10)} → ${r.e.toISOString().slice(0,10)} (${r.l} días)`).join('<br>')
+})
 </script>
 </body>
 </html>
