@@ -1,70 +1,352 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Optimizador de Vacaciones – COL</title>
-<style>
-@font-face{font-family:Int;font-weight:700;src:url("../assets/fonts/Inter-Bold.ttf") format("truetype");font-display:swap}
-@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
-:root{--shadow-color:0deg 0% 0%;--shadow-elevation-low:1px 1px 1.1px hsl(var(--shadow-color)/.47),5px 5px 5.3px -5px hsl(var(--shadow-color)/.23);--brand:#1976d2}
-*,::after,::before{box-sizing:border-box}
-*{margin:0;padding:0}
-body{font-family:Int;background:#fff;color:#000;line-height:1.4}
-.main-container{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:2rem 1rem;font-family:Int;font-weight:700;gap:2rem}
-form{display:flex;flex-direction:column;gap:1rem;width:100%;max-width:480px}
-label{font-family:Mont;font-weight:600;font-size:.95rem;display:flex;flex-direction:column;gap:.4rem}
-input,button{padding:.8rem 1rem;font-size:1rem;border:1px solid #000;border-radius:.5rem;font-family:Mont}
-button{background:var(--brand);color:#fff;font-weight:600;cursor:pointer;box-shadow:var(--shadow-elevation-low);transition:opacity .2s}
-button:hover{opacity:.9}
-#results{font-family:Mont;font-size:1.1rem;font-weight:600;text-align:center;display:flex;flex-direction:column;gap:.7rem}
-@media only screen and (max-width:768px){
-.main-container{padding-top:3rem;padding-bottom:3rem}
-}
-</style>
-</head>
-<body>
-<div class="main-container">
-<h1>Optimizador de Vacaciones</h1>
-<form id="vacForm">
-<label>Días de vacaciones <input type="number" id="vacDays" min="1" required></label>
-<label>Inicio <input type="date" id="start"></label>
-<label>Fin <input type="date" id="end"></label>
-<button type="submit">Calcular</button>
-</form>
-<div id="results"></div>
-</div>
-<script>
-const t=new Date(),sd=document.getElementById('start'),ed=document.getElementById('end')
-sd.value=t.toISOString().slice(0,10)
-ed.value=new Date(t.getFullYear(),11,31).toISOString().slice(0,10)
-document.getElementById('vacForm').addEventListener('submit',async e=>{
- e.preventDefault()
- const v=parseInt(document.getElementById('vacDays').value,10)
- const s=new Date(sd.value),f=new Date(ed.value)
- const yrs=[...Array(f.getFullYear()-s.getFullYear()+1)].map((_,i)=>s.getFullYear()+i)
- const hol=new Set()
- for(const y of yrs){
-  const r=await fetch(`https://api.diafestivo.co/make?year=${y}`).then(x=>x.json()).catch(()=>[])
-  ;(r.holidays||r).forEach(h=>{const d=new Date(h.date);if(d>=s&&d<=f)hol.add(d.toISOString().slice(0,10))})
- }
- const isRest=d=>d.getDay()>4||hol.has(d.toISOString().slice(0,10))
- const cal=[];for(let d=new Date(s);d<=f;d.setDate(d.getDate()+1))cal.push(new Date(d))
- const best=[]
- for(let i=0;i<cal.length;i++){
-  if(isRest(cal[i]))continue
-  let used=0,j=i
-  while(j<cal.length&&used<v){if(!isRest(cal[j]))used++;j++}
-  if(used<v)break
-  let a=i,b=j-1
-  while(a>0&&isRest(cal[a-1]))a--
-  while(b<cal.length-1&&isRest(cal[b+1]))b++
-  best.push({s:cal[a],e:cal[b],l:b-a+1})
- }
- best.sort((x,y)=>y.l-x.l||x.s-y.s)
- document.getElementById('results').innerHTML=best.slice(0,5).map(r=>`${r.s.toISOString().slice(0,10)} → ${r.e.toISOString().slice(0,10)} (${r.l} días)`).join('<br>')
-})
-</script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta
+            name="description"
+            content="Planificador que optimiza tus días de descanso en Colombia combinando festivos, fines de semana y vacaciones."
+        />
+        <link rel="icon" type="image/png" href="../assets/favicon.png" />
+        <title>Optimizador de Vacaciones</title>
+
+        <style>
+            @font-face {
+                font-family: Int;
+                font-weight: 700;
+                src: url("../assets/fonts/Inter-Bold.ttf") format("truetype");
+                font-display: swap;
+            }
+            @font-face {
+                font-family: Mont;
+                src: url("../assets/fonts/Montserrat-Regular.ttf")
+                    format("truetype");
+                font-weight: 400;
+                font-display: swap;
+            }
+            @font-face {
+                font-family: Mont;
+                src: url("../assets/fonts/Montserrat-SemiBold.ttf")
+                    format("truetype");
+                font-weight: 600;
+                font-display: swap;
+            }
+            :root {
+                --shadow-color: 0deg 0% 0%;
+                --shadow-elevation-low:
+                    1px 1px 1.1px hsl(var(--shadow-color) / 0.47),
+                    5px 5px 5.3px -5px hsl(var(--shadow-color) / 0.23);
+                --brand: #1976d2;
+            }
+            *,
+            ::after,
+            ::before {
+                box-sizing: border-box;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            p {
+                overflow-wrap: break-word;
+            }
+            body {
+                font-family: Int;
+                background: #fff;
+                color: #000;
+                line-height: 1.4;
+            }
+
+            .main-container {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 2rem 1rem;
+                font-family: Int;
+                font-weight: 700;
+                gap: 2rem;
+            }
+            h1 {
+                font-family: Mont;
+                font-weight: 600;
+                font-size: 1.8rem;
+                text-align: center;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+                max-width: 480px;
+            }
+            label {
+                font-family: Mont;
+                font-weight: 600;
+                font-size: 0.95rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.4rem;
+            }
+            input,
+            button {
+                padding: 0.8rem 1rem;
+                font-size: 1rem;
+                border: 1px solid #000;
+                border-radius: 0.5rem;
+                font-family: Mont;
+            }
+            button {
+                background: var(--brand);
+                color: #fff;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: var(--shadow-elevation-low);
+                transition: opacity 0.2s;
+            }
+            button:hover {
+                opacity: 0.9;
+            }
+            #results {
+                font-family: Mont;
+                font-size: 1.1rem;
+                font-weight: 600;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                gap: 0.7rem;
+            }
+
+            .loading,
+            footer {
+                font-family: Mont;
+            }
+            .loading {
+                width: 100vw;
+                height: 100vh;
+                font-size: 1.5rem;
+                font-weight: 600;
+                display: none;
+                justify-content: center;
+                align-items: center;
+            }
+            footer {
+                background: #fff;
+                z-index: 2;
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                font-weight: 800;
+                font-size: 1rem;
+                border: 1px solid #000;
+                border-radius: 1rem;
+                padding: 0.3rem 1rem;
+                display: flex;
+                gap: 1rem;
+                cursor: pointer;
+                box-shadow: var(--shadow-elevation-low);
+                min-height: 40px;
+                max-height: 40px;
+            }
+            footer a {
+                text-decoration: none;
+                color: #000;
+            }
+            .footer__claps,
+            .footer__message {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                justify-content: center;
+            }
+            .footer__claps img,
+            .footer__message img {
+                width: 20px;
+            }
+            .separator {
+                border-right: 1px solid #000;
+                padding-right: 15px;
+                height: 10px;
+                margin-top: 9px;
+            }
+            .title-text {
+                font-weight: 700;
+                font-size: clamp(3rem, 5vw, 5rem);
+            }
+
+            @keyframes grow-shrink {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                25%,
+                75% {
+                    transform: scale(1.1);
+                }
+                50% {
+                    transform: scale(1.3);
+                }
+            }
+            .jump {
+                animation: grow-shrink 0.3s forwards;
+            }
+
+            @media (max-width: 768px) {
+                .main-container {
+                    margin-left: 0;
+                    margin-top: 1rem;
+                    margin-bottom: 1rem;
+                }
+                footer {
+                    padding: 0.9em 1rem;
+                    top: 93dvh;
+                }
+                .title-text {
+                    width: 10ch;
+                }
+            }
+            @media (min-width: 768px) {
+                .main-container {
+                    padding-top: 7rem;
+                    padding-bottom: 7rem;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <main class="main-container">
+            <h1 class="title-text">Optimizador de Vacaciones</h1>
+            <form id="vacForm">
+                <label
+                    >Días de vacaciones
+                    <input type="number" id="vacDays" min="1" required
+                /></label>
+                <label>Inicio <input type="date" id="start" /></label>
+                <label>Fin <input type="date" id="end" /></label>
+                <button type="submit">Calcular</button>
+            </form>
+            <div id="results"></div>
+        </main>
+
+        <footer>
+            <a class="footer__claps separator" id="claps" onclick="addClap()"
+                >0
+                <img
+                    src="../assets/like.png"
+                    alt="cheering icon"
+                    width="20"
+                    height="20"
+            /></a>
+            <a
+                class="footer__message separator"
+                href="https://www.sanetomore.com/"
+            >
+                <img
+                    src="../assets/contact.png"
+                    alt="contact icon"
+                    width="20"
+                    height="20"
+                />
+            </a>
+            <a class="footer__message" href="../index.html">
+                <img
+                    src="../assets/back.png"
+                    alt="back icon"
+                    width="18"
+                    height="18"
+                />
+            </a>
+        </footer>
+
+        <script defer>
+            const today = new Date(),
+                sd = document.getElementById("start"),
+                ed = document.getElementById("end");
+            sd.value = today.toISOString().slice(0, 10);
+            ed.value = new Date(today.getFullYear(), 11, 31)
+                .toISOString()
+                .slice(0, 10);
+
+            document
+                .getElementById("vacForm")
+                .addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const v = parseInt(
+                        document.getElementById("vacDays").value,
+                        10,
+                    );
+                    const s = new Date(sd.value),
+                        f = new Date(ed.value);
+                    const yrs = [
+                        ...Array(f.getFullYear() - s.getFullYear() + 1),
+                    ].map((_, i) => s.getFullYear() + i);
+                    const hol = new Set();
+                    for (const y of yrs) {
+                        const r = await fetch(
+                            `https://api.diafestivo.co/make?year=${y}`,
+                        )
+                            .then((x) => x.json())
+                            .catch(() => []);
+                        (r.holidays || r).forEach((h) => {
+                            const d = new Date(h.date);
+                            if (d >= s && d <= f)
+                                hol.add(d.toISOString().slice(0, 10));
+                        });
+                    }
+                    const isRest = (d) =>
+                        d.getDay() > 4 || hol.has(d.toISOString().slice(0, 10));
+                    const cal = [];
+                    for (
+                        let d = new Date(s);
+                        d <= f;
+                        d.setDate(d.getDate() + 1)
+                    )
+                        cal.push(new Date(d));
+                    const best = [];
+                    for (let i = 0; i < cal.length; i++) {
+                        if (isRest(cal[i])) continue;
+                        let used = 0,
+                            j = i;
+                        while (j < cal.length && used < v) {
+                            if (!isRest(cal[j])) used++;
+                            j++;
+                        }
+                        if (used < v) break;
+                        let a = i,
+                            b = j - 1;
+                        while (a > 0 && isRest(cal[a - 1])) a--;
+                        while (b < cal.length - 1 && isRest(cal[b + 1])) b++;
+                        best.push({ s: cal[a], e: cal[b], l: b - a + 1 });
+                    }
+                    best.sort((x, y) => y.l - x.l || x.s - y.s);
+                    document.getElementById("results").innerHTML = best
+                        .slice(0, 5)
+                        .map(
+                            (r) =>
+                                `${r.s.toISOString().slice(0, 10)} → ${r.e.toISOString().slice(0, 10)} (${r.l} días)`,
+                        )
+                        .join("<br>");
+                });
+
+            const p =
+                    '<img src="../assets/like.png" alt="cheering icon" width="20" height="20">',
+                l = "https://likes.diafestivo.co";
+            const d = document.getElementById("claps");
+            function addClap() {
+                let e = Number(d.innerText) + 1;
+                d.classList.add("jump");
+                setTimeout(() => d.classList.remove("jump"), 200);
+                d.innerHTML = `${e} ${p}`;
+                fetch(l, { method: "POST" });
+            }
+            fetch(l)
+                .then((t) => t.text())
+                .then((t) => {
+                    d.innerHTML = `${t} ${p}`;
+                });
+        </script>
+    </body>
 </html>
