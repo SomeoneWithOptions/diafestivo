@@ -176,6 +176,44 @@
                 font-size: clamp(3rem, 5vw, 5rem);
             }
 
+            footer {
+                z-index: 2;
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                font-weight: 800;
+                font-size: 1rem;
+                border: 1px solid #000;
+                border-radius: 1rem;
+                padding: 0.3rem 1rem;
+                display: flex;
+                gap: 1rem;
+                cursor: pointer;
+                box-shadow: var(--shadow-elevation-low);
+                min-height: 40px;
+                max-height: 40px;
+            }
+            .footer__like,
+            .footer__list,
+            .footer__message {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                justify-content: center;
+            }
+            .footer__like img,
+            .footer__list,
+            .footer__message img {
+                width: 20px;
+            }
+
+            .separator {
+                border-right: 1px solid #000;
+                padding-right: 15px;
+                height: 10px;
+                margin-top: 9px;
+            }
+
             @keyframes grow-shrink {
                 0%,
                 100% {
@@ -205,6 +243,12 @@
                 }
                 .title-text {
                     width: 10ch;
+                }
+                .separator {
+                    border-right: 1px solid #000;
+                    padding-right: 15px;
+                    max-height: 10px;
+                    margin-top: 0;
                 }
             }
             @media (min-width: 768px) {
