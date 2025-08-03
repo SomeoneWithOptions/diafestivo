@@ -118,6 +118,17 @@
                 flex-direction: column;
                 gap: 0.7rem;
             }
+            .main-result {
+                font-size: 1.6rem;
+                font-weight: 700;
+            }
+            details summary {
+                cursor: pointer;
+                margin-top: 0.5rem;
+            }
+            details div {
+                margin-top: 0.4rem;
+            }
 
             .loading,
             footer {
@@ -176,44 +187,6 @@
                 font-size: clamp(3rem, 5vw, 5rem);
             }
 
-            footer {
-                z-index: 2;
-                position: absolute;
-                bottom: 10px;
-                right: 10px;
-                font-weight: 800;
-                font-size: 1rem;
-                border: 1px solid #000;
-                border-radius: 1rem;
-                padding: 0.3rem 1rem;
-                display: flex;
-                gap: 1rem;
-                cursor: pointer;
-                box-shadow: var(--shadow-elevation-low);
-                min-height: 40px;
-                max-height: 40px;
-            }
-            .footer__like,
-            .footer__list,
-            .footer__message {
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
-                justify-content: center;
-            }
-            .footer__like img,
-            .footer__list,
-            .footer__message img {
-                width: 20px;
-            }
-
-            .separator {
-                border-right: 1px solid #000;
-                padding-right: 15px;
-                height: 10px;
-                margin-top: 9px;
-            }
-
             @keyframes grow-shrink {
                 0%,
                 100% {
@@ -241,16 +214,11 @@
                     padding: 0.9em 1rem;
                     top: 93dvh;
                 }
-                .title-text {
-                }
                 .separator {
                     border-right: 1px solid #000;
                     padding-right: 15px;
                     max-height: 10px;
                     margin-top: 0;
-                }
-                footer {
-                    position: fixed;
                 }
                 #results {
                     margin-bottom: 2rem;
@@ -371,13 +339,27 @@
                         best.push({ s: cal[a], e: cal[b], l: b - a + 1 });
                     }
                     best.sort((x, y) => y.l - x.l || x.s - y.s);
-                    document.getElementById("results").innerHTML = best
-                        .slice(0, 5)
-                        .map(
-                            (r) =>
-                                `${r.s.toISOString().slice(0, 10)} → ${r.e.toISOString().slice(0, 10)} (${r.l} días)`,
-                        )
-                        .join("<br>");
+                    const resultsDiv = document.getElementById("results");
+                    resultsDiv.innerHTML = "";
+                    if (best.length) {
+                        const main = document.createElement("div");
+                        main.className = "main-result";
+                        const r0 = best[0];
+                        main.textContent = `${r0.s.toISOString().slice(0, 10)} → ${r0.e.toISOString().slice(0, 10)} (${r0.l} días)`;
+                        resultsDiv.appendChild(main);
+                        if (best.length > 1) {
+                            const details = document.createElement("details");
+                            const summary = document.createElement("summary");
+                            summary.textContent = "Más resultados";
+                            details.appendChild(summary);
+                            best.slice(1, 11).forEach((r) => {
+                                const p = document.createElement("div");
+                                p.textContent = `${r.s.toISOString().slice(0, 10)} → ${r.e.toISOString().slice(0, 10)} (${r.l} días)`;
+                                details.appendChild(p);
+                            });
+                            resultsDiv.appendChild(details);
+                        }
+                    }
                 });
 
             const p =
