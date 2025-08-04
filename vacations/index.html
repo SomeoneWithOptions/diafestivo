@@ -168,7 +168,8 @@
             }
             .footer__claps,
             .footer__message,
-            .footer__calendar {
+            .footer__calendar,
+            .footer__list {
                 display: flex;
                 gap: 0.5rem;
                 align-items: center;
@@ -252,17 +253,42 @@
         </main>
 
         <footer>
-            <a class="footer__like separator" id="like" onclick="addLike()"> 0
-                <img src="./assets/like.png" alt="cheering icon" width="20px" height="20px"></a>
+            <a class="footer__claps separator" id="claps" onclick="addClap()">
+                0
+                <img
+                    src="../assets/like.png"
+                    alt="cheering icon"
+                    width="20px"
+                    height="20px"
+                />
             </a>
-            <a class="footer__message separator" id="sm" href="https://www.sanetomore.com/">
-                <img src="./assets/contact.png" alt="contact icon" width="20px" height="20px">
+            <a
+                class="footer__message separator"
+                id="sm"
+                href="https://www.sanetomore.com/"
+            >
+                <img
+                    src="../assets/contact.png"
+                    alt="contact icon"
+                    width="20px"
+                    height="20px"
+                />
             </a>
-            <a class="footer__message" id="bf" href="../index.html">
-                <img src="../assets/back.png" alt="back icon" width="18px" height="18px">
+            <a class="footer__message separator" id="bf" href="../index.html">
+                <img
+                    src="../assets/back.png"
+                    alt="back icon"
+                    width="18px"
+                    height="18px"
+                />
             </a>
-            <a class="footer__list" id="fl" href="./all/index.html">
-                <img src="./assets/list.png" alt="list icon" width="20px" height="20px">
+            <a class="footer__list" id="fl" href="../all/index.html">
+                <img
+                    src="../assets/list.png"
+                    alt="list icon"
+                    width="20px"
+                    height="20px"
+                />
             </a>
         </footer>
 
