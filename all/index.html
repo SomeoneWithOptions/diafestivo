@@ -14,9 +14,9 @@
 <body>
     <main>
         <p class="normal-text loading" id="loading">Loading...</p>
-        <div id="main-container" class="main-container">
-        </div>
+        <div id="main-container" class="main-container"></div>
     </main>
+
     <footer>
         <a class="footer__claps separator" id="claps" onclick="addLike()"> 0
             <img src="../assets/like.png" alt="cheering icon" width="20px" height="20px">
@@ -31,13 +31,315 @@
             <img src="../assets/back.png" alt="back icon" width="18px" height="18px">
         </a>
     </footer>
-</body>
-<script defer>
-const p='<img src="../assets/like.png" alt="contact icon" width="20px" height="20px">',u="https://api.diafestivo.co",l="https://likes.diafestivo.co",c=document.getElementById("main-container"),i=document.getElementById("loading");function addLike(t){let e=Number(d.innerText)+1;d.classList.add("jump"),setTimeout(()=>{d.classList.remove("jump")},200),d.innerHTML=`${e} ${p}`,fetch(`${l}`,{method:"POST"}).then(t=>t.text()).then(t=>console.log(t))}d=document.getElementById("claps"),fetch("https://api.diafestivo.co/left").then(t=>t.text()).then(t=>{i.style.display="none",c.style.display="flex",c.classList.add("animation__fade-in"),c.innerHTML=t}).catch(t=>c.innerHTML=t),fetch(`${l}`).then(t=>t.text()).then(t=>{d.innerHTML=`${t} ${p}`}).catch(t=>d.innerHTML=`0 ${p}`);
-</script>
 
-<style>
-@font-face{font-family:Int;font-weight:700;src:url("../assets/fonts/Inter-Bold.ttf") format("truetype");font-display:swap}@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-Regular.ttf") format("truetype");font-weight:400;font-display:swap}@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}:root{--shadow-color:0deg 0% 0%;--shadow-elevation-low:1px 1px 1.1px hsl(var(--shadow-color) / 0.47),5px 5px 5.3px -5px hsl(var(--shadow-color) / 0.23)}*,::after,::before{box-sizing:border-box}*{margin:0;padding:0}p{overflow-wrap:break-word}.loading,footer{font-family:Mont}.loading{width:100vw;height:100vh;font-size:1.5rem;font-weight:600}footer{background-color:#fff;z-index:2;position:fixed;bottom:10px;right:10px;font-weight:800;font-size:1rem;border:1px solid #000;border-radius:1rem;padding:.3rem 1rem;display:flex;gap:1rem;cursor:pointer;box-shadow:var(--shadow-elevation-low);min-height:40px;max-height:40px}.main-container{min-height:100vh;display:none;opacity:0;font-family:Int;font-weight:700;justify-content:center;align-items:flex-start;margin-left:clamp(1rem,15vw,50%);flex-direction:column}.loading{opacity:1;display:flex;justify-content:center;align-items:center}footer a{text-decoration:none;color:#000}.footer__calendar,.footer__claps,.footer__message{display:flex;gap:.5rem;align-items:center;justify-content:center}.footer__claps img,.footer__message img{width:20px}@keyframes grow-shrink{0%,100%{transform:scale(1)}25%,75%{transform:scale(1.1)}50%{transform:scale(1.3)}}.jump{animation-name:grow-shrink;animation-duration:.3s;animation-fill-mode:forwards}.animation__fade-in{animation:1s ease-out forwards fadein}@keyframes fadein{0%{opacity:0}100%{opacity:1}}.holiday_list{list-style:none;display:flex;flex-direction:column;gap:1.5rem}.holiday{display:flex;list-style:none}.holiday__day{font-size:clamp(3.5rem, 12vw, 5rem);width:2.3ch;text-align:center}.holiday__info{font-family:Mont;display:flex;justify-content:space-around;flex-direction:column}.holiday__month{font-size:1.2rem;font-family:Mont;font-weight:600}.holiday__days_left,.holiday__name{text-transform:capitalize;font-weight:400}.separator{border-right:1px solid #000;padding-right:15px;height:10px;margin-top:9px}@media only screen and (max-width:768px){.main-container{margin-left:0;margin-top:1rem;align-items:center;margin-bottom:1rem}footer{padding:.9em 1rem;top:93dvh}.holiday__name{width:20ch}.separator{border-right:1px solid #000;padding-right:15px;max-height:10px;margin-top:0}}@media only screen and (min-width:768px){.main-container{padding-top:7rem;padding-bottom:7rem}}
-</style>
+    <script defer>
+        const likeIconHtml = '<img src="../assets/like.png" alt="cheering icon" width="20" height="20">';
+        const likesUrl = "https://likes.diafestivo.co";
+        const listUrl = "https://api.diafestivo.co/left";
+
+        const container = document.getElementById("main-container");
+        const loading = document.getElementById("loading");
+        const claps = document.getElementById("claps");
+
+        function addLike() {
+            const nextCount = Number(claps.innerText) + 1;
+            claps.classList.add("jump");
+            setTimeout(() => {
+                claps.classList.remove("jump");
+            }, 200);
+
+            claps.innerHTML = `${nextCount} ${likeIconHtml}`;
+            fetch(likesUrl, { method: "POST" })
+                .then((r) => r.text())
+                .then((t) => console.log(t));
+        }
+
+        fetch(listUrl)
+            .then((r) => r.text())
+            .then((html) => {
+                loading.style.display = "none";
+                container.style.display = "block";
+                container.classList.add("animation__fade-in");
+                container.innerHTML = html;
+            })
+            .catch((err) => (container.innerHTML = err));
+
+        fetch(likesUrl)
+            .then((r) => r.text())
+            .then((t) => {
+                claps.innerHTML = `${t} ${likeIconHtml}`;
+            })
+            .catch(() => (claps.innerHTML = `0 ${likeIconHtml}`));
+    </script>
+
+    <style>
+        @font-face {
+            font-family: Int;
+            font-weight: 700;
+            src: url("../assets/fonts/Inter-Bold.ttf") format("truetype");
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: Mont;
+            src: url("../assets/fonts/Montserrat-Regular.ttf") format("truetype");
+            font-weight: 400;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: Mont;
+            src: url("../assets/fonts/Montserrat-SemiBold.ttf") format("truetype");
+            font-weight: 600;
+            font-display: swap;
+        }
+
+        :root {
+            --shadow-color: 0deg 0% 0%;
+            --shadow-elevation-low:
+                1px 1px 1.1px hsl(var(--shadow-color) / 0.47),
+                5px 5px 5.3px -5px hsl(var(--shadow-color) / 0.23);
+            --shadow-elevation-medium:
+                0.5px 0.5px 0.8px hsl(var(--shadow-color) / 0.14),
+                1.9px 2px 3.2px -0.7px hsl(var(--shadow-color) / 0.15),
+                4.9px 5px 8.1px -1.5px hsl(var(--shadow-color) / 0.16),
+                11.8px 12.1px 19.6px -2.2px hsl(var(--shadow-color) / 0.17);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #fff;
+        }
+
+        p {
+            overflow-wrap: break-word;
+        }
+
+        main {
+            padding: clamp(1rem, 4vw, 2.5rem);
+            padding-bottom: 2.5rem;
+        }
+
+        @media (min-width: 680px) {
+            main {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding-top: clamp(3rem, 6vh, 5rem);
+                padding-bottom: 1.5rem;
+            }
+
+            .main-container {
+                min-height: auto;
+                width: 100%;
+            }
+
+            .loading {
+                min-height: auto;
+            }
+        }
+
+        .loading {
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            font-family: Mont, sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-container {
+            min-height: auto;
+            display: none;
+            opacity: 0;
+            font-family: Int, sans-serif;
+            font-weight: 700;
+            max-width: 1100px;
+            margin-inline: auto;
+        }
+
+        .animation__fade-in {
+            animation: 1s ease-out forwards fadein;
+        }
+
+        @keyframes fadein {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .holiday_list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 680px) {
+            .holiday_list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1.25rem;
+            }
+        }
+
+        @media (min-width: 1060px) {
+            .holiday_list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .holiday {
+            list-style: none;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 1rem;
+            align-items: center;
+            padding: 1.1rem 1.25rem;
+            border-radius: 1rem;
+            background: #fff;
+            box-shadow: var(--shadow-elevation-medium);
+        }
+
+        .holiday__day {
+            font-family: Int, sans-serif;
+            font-size: clamp(3.5rem, 12vw, 5rem);
+            font-weight: 700;
+            line-height: 0.9;
+            width: 2.3ch;
+            text-align: center;
+        }
+
+        .holiday__info {
+            font-family: Mont, sans-serif;
+            font-weight: 400;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .holiday__month {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .holiday__name {
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.25;
+            text-transform: capitalize;
+        }
+
+        .holiday__week-day,
+        .holiday__days_left {
+            font-size: 0.95rem;
+            font-weight: 400;
+            opacity: 0.85;
+        }
+
+        .holiday__week-day {
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 420px) {
+            .holiday {
+                padding: 0.95rem 1rem;
+                column-gap: 0.75rem;
+            }
+
+            .holiday__name {
+                font-size: 1.05rem;
+            }
+        }
+
+        .separator {
+            border-right: 1px solid #000;
+            padding-right: 15px;
+            height: 10px;
+            margin-top: 9px;
+        }
+
+        footer {
+            background-color: #fff;
+            z-index: 2;
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-family: Mont, sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            border: 1px solid #000;
+            border-radius: 1rem;
+            padding: 0.3rem 1rem;
+            display: flex;
+            gap: 1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-elevation-low);
+            min-height: 40px;
+            max-height: 40px;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        .footer__calendar,
+        .footer__claps,
+        .footer__message {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer__claps img,
+        .footer__message img {
+            width: 20px;
+        }
+
+        @keyframes grow-shrink {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25%,
+            75% {
+                transform: scale(1.1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        .jump {
+            animation-name: grow-shrink;
+            animation-duration: 0.3s;
+            animation-fill-mode: forwards;
+        }
+    </style>
+</body>
 
 </html>
