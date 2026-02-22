@@ -635,7 +635,7 @@ body {
 }
 
 .field-label {
-    position: relative;
+    position: static;
     display: flex;
     align-items: center;
     gap: 0.16rem;
@@ -651,7 +651,7 @@ body {
 }
 
 .field-tooltip {
-    position: relative;
+    position: static;
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
@@ -663,6 +663,7 @@ body {
     left: 50%;
     display: block;
     width: min(44ch, calc(100vw - 3rem));
+    max-width: calc(100% - 0.15rem);
     padding: 0.85rem 0.95rem;
     border: 1px solid #c9d3ea;
     border-radius: 0.75rem;
@@ -1128,6 +1129,7 @@ body {
 
     .field-tooltip-bubble {
         width: min(42ch, calc(100vw - 3rem));
+        max-width: calc(100% - 0.15rem);
         padding: 0.85rem 0.9rem;
         font-size: 0.86rem;
         line-height: 1.58;
