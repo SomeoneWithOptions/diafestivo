@@ -140,8 +140,10 @@
         </a>
     </footer>
 </body>
-<script defer>
-const today = new Date();
+<script type="module">
+import { computeCandidates, parseIsoUtc } from "./optimizer.js";
+
+const COLOMBIA_TIMEZONE = "America/Bogota";
 const startInput = document.getElementById("start");
 const endInput = document.getElementById("end");
 const form = document.getElementById("vacForm");
@@ -149,31 +151,47 @@ const daysInput = document.getElementById("vacDays");
 const results = document.getElementById("results");
 const submitBtn = form.querySelector("button[type='submit']");
 
-const defaultYear = today.getMonth() > 9 ? today.getFullYear() + 1 : today.getFullYear();
+const getTodayIsoInTimezone = (timeZone) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).formatToParts(new Date());
+
+    const lookup = {};
+    parts.forEach((part) => {
+        lookup[part.type] = part.value;
+    });
+
+    return `${lookup.year}-${lookup.month}-${lookup.day}`;
+};
+
+const todayIso = getTodayIsoInTimezone(COLOMBIA_TIMEZONE);
+const todayDateUtc = parseIsoUtc(todayIso);
+const defaultYear =
+    todayDateUtc.getUTCMonth() > 9
+        ? todayDateUtc.getUTCFullYear() + 1
+        : todayDateUtc.getUTCFullYear();
+
 endInput.value = `${defaultYear}-12-31`;
-startInput.value = today.toISOString().slice(0, 10);
+startInput.value = todayIso;
 results.setAttribute("aria-busy", "false");
 
 const dateFormatter = new Intl.DateTimeFormat("es-CO", {
+    timeZone: "UTC",
     weekday: "short",
     day: "2-digit",
     month: "short",
     year: "numeric",
 });
 
-const toIso = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
+const formatDateCompact = (iso) => dateFormatter.format(parseIsoUtc(iso));
 
-const formatDateCompact = (date) => dateFormatter.format(date);
-
-const createDateTag = (date) => {
+const createDateTag = (iso) => {
     const time = document.createElement("time");
-    time.dateTime = toIso(date);
-    time.textContent = formatDateCompact(date);
+    time.dateTime = iso;
+    time.textContent = formatDateCompact(iso);
     return time;
 };
 
@@ -212,19 +230,19 @@ const renderMainResult = (item, vacationDays) => {
     const range = document.createElement("p");
     range.className = "result-range";
     range.append(
-        createDateTag(item.s),
+        createDateTag(item.startIso),
         Object.assign(document.createElement("span"), {
             className: "result-range-separator",
             textContent: "→",
         }),
-        createDateTag(item.e)
+        createDateTag(item.endIso)
     );
 
     const stats = document.createElement("div");
     stats.className = "result-stats";
-    const extraDays = Math.max(item.l - vacationDays, 0);
+    const extraDays = Math.max(item.totalDays - vacationDays, 0);
     stats.append(
-        createStat("Descanso total", `${item.l} días`),
+        createStat("Descanso total", `${item.totalDays} días`),
         createStat("Vacaciones usadas", `${vacationDays} días`),
         createStat("Días extra", `${extraDays} días`)
     );
@@ -256,18 +274,18 @@ const renderSecondaryResults = (items, vacationDays) => {
         const range = document.createElement("p");
         range.className = "results-item-range";
         range.append(
-            createDateTag(item.s),
+            createDateTag(item.startIso),
             Object.assign(document.createElement("span"), {
                 className: "result-range-separator",
                 textContent: "→",
             }),
-            createDateTag(item.e)
+            createDateTag(item.endIso)
         );
 
-        const extraDays = Math.max(item.l - vacationDays, 0);
+        const extraDays = Math.max(item.totalDays - vacationDays, 0);
         const meta = document.createElement("p");
         meta.className = "results-item-meta";
-        meta.textContent = `${item.l} días de descanso · ${vacationDays} de vacaciones · ${extraDays} extra`;
+        meta.textContent = `${item.totalDays} días de descanso · ${vacationDays} de vacaciones · ${extraDays} extra`;
 
         row.append(range, meta);
         list.appendChild(row);
@@ -281,15 +299,20 @@ form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const vacationDays = parseInt(daysInput.value, 10);
-    const startDate = new Date(startInput.value);
-    const endDate = new Date(endInput.value);
+    const startIso = startInput.value;
+    const endIso = endInput.value;
 
     if (!vacationDays || Number.isNaN(vacationDays)) {
         renderValidationMessage("Ingresa un número válido de días.");
         return;
     }
 
-    if (startDate > endDate) {
+    if (!startIso || !endIso) {
+        renderValidationMessage("Selecciona una fecha de inicio y fin.");
+        return;
+    }
+
+    if (startIso > endIso) {
         renderValidationMessage("La fecha de inicio debe ser anterior a la fecha final.");
         return;
     }
@@ -300,9 +323,9 @@ form.addEventListener("submit", async (event) => {
     results.setAttribute("aria-busy", "true");
 
     try {
-        const years = [...Array(endDate.getFullYear() - startDate.getFullYear() + 1)].map(
-            (_, index) => startDate.getFullYear() + index
-        );
+        const startYear = Number(startIso.slice(0, 4));
+        const endYear = Number(endIso.slice(0, 4));
+        const years = [...Array(endYear - startYear + 1)].map((_, index) => startYear + index);
 
         const holidaySet = new Set();
         for (const year of years) {
@@ -311,61 +334,19 @@ form.addEventListener("submit", async (event) => {
                 .catch(() => []);
 
             (data.holidays || data).forEach((holiday) => {
-                const date = new Date(holiday.date);
-                if (date >= startDate && date <= endDate) {
-                    holidaySet.add(date.toISOString().slice(0, 10));
+                const holidayIso = String(holiday.date).slice(0, 10);
+                if (holidayIso >= startIso && holidayIso <= endIso) {
+                    holidaySet.add(holidayIso);
                 }
             });
         }
 
-        const isHolidayOrWeekend = (date) =>
-            date.getDay() > 4 || holidaySet.has(date.toISOString().slice(0, 10));
-
-        const rangeDates = [];
-        for (let day = new Date(startDate); day <= endDate; day.setDate(day.getDate() + 1)) {
-            rangeDates.push(new Date(day));
-        }
-
-        const candidates = [];
-        for (let index = 0; index < rangeDates.length; index++) {
-            if (isHolidayOrWeekend(rangeDates[index])) {
-                continue;
-            }
-
-            let usedDays = 0;
-            let runner = index;
-            for (; runner < rangeDates.length && usedDays < vacationDays; runner++) {
-                if (!isHolidayOrWeekend(rangeDates[runner])) {
-                    usedDays += 1;
-                }
-            }
-
-            if (usedDays < vacationDays) {
-                break;
-            }
-
-            let startIndex = index;
-            let endIndex = runner - 1;
-
-            while (startIndex > 0 && isHolidayOrWeekend(rangeDates[startIndex - 1])) {
-                startIndex -= 1;
-            }
-
-            while (
-                endIndex < rangeDates.length - 1 &&
-                isHolidayOrWeekend(rangeDates[endIndex + 1])
-            ) {
-                endIndex += 1;
-            }
-
-            candidates.push({
-                s: rangeDates[startIndex],
-                e: rangeDates[endIndex],
-                l: endIndex - startIndex + 1,
-            });
-        }
-
-        candidates.sort((a, b) => b.l - a.l || a.s - b.s);
+        const candidates = computeCandidates({
+            startIso,
+            endIso,
+            vacationDays,
+            holidaySet,
+        });
 
         if (!candidates.length) {
             renderValidationMessage("No encontramos combinaciones en ese rango. Prueba con otras fechas.");
@@ -395,6 +376,8 @@ function addLike() {
     d.innerHTML = `<span class="vac-footer__count">${e}</span> ${p}`;
     fetch(l, { method: "POST" });
 }
+
+window.addLike = addLike;
 
 fetch(l)
     .then((response) => response.text())
