@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+LICENSE
+.DS_Store
+*.log
+node_modules
+npm-debug.log
+.vscode
+.idea
+*.md
