@@ -611,9 +611,11 @@ body {
 }
 
 .field-label {
-    display: inline-flex;
+    position: relative;
+    display: flex;
     align-items: center;
     gap: 0.4rem;
+    width: 100%;
 }
 
 .field-label label {
@@ -622,27 +624,29 @@ body {
 }
 
 .field-tooltip {
-    position: relative;
+    position: static;
     display: inline-flex;
     align-items: center;
 }
 
 .field-tooltip-bubble {
     position: absolute;
-    top: calc(100% + 0.5rem);
-    left: -0.2rem;
-    width: min(46ch, calc(100vw - 3rem));
-    padding: 0.75rem 0.85rem;
+    top: calc(100% + 0.55rem);
+    left: 50%;
+    display: block;
+    width: min(50ch, calc(100vw - 4rem));
+    max-width: calc(100% - 0.15rem);
+    padding: 0.85rem 0.95rem;
     border: 1px solid #c9d3ea;
     border-radius: 0.75rem;
     background: #f8fbff;
     color: #2a3344;
-    font-size: 0.84rem;
+    font-size: 0.88rem;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.55;
     box-shadow: 0 10px 30px -20px #0f1a364f;
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translate(-50%, -5px);
     pointer-events: none;
     transition: opacity 180ms ease, transform 180ms ease;
     z-index: 4;
@@ -651,7 +655,7 @@ body {
 .field-tooltip:hover .field-tooltip-bubble,
 .field-tooltip:focus-within .field-tooltip-bubble {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, 0);
 }
 
 .form-field input {
@@ -1003,9 +1007,11 @@ body {
     }
 
     .field-tooltip-bubble {
-        width: min(40ch, calc(100vw - 3rem));
-        font-size: 0.82rem;
-        line-height: 1.55;
+        width: min(42ch, calc(100vw - 3rem));
+        max-width: calc(100% - 0.1rem);
+        padding: 0.85rem 0.9rem;
+        font-size: 0.86rem;
+        line-height: 1.58;
     }
 
     .result-hero {
