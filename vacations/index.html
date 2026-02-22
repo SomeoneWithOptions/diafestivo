@@ -148,9 +148,130 @@ const submitBtn = form.querySelector("button[type='submit']");
 const defaultYear = today.getMonth() > 9 ? today.getFullYear() + 1 : today.getFullYear();
 endInput.value = `${defaultYear}-12-31`;
 startInput.value = today.toISOString().slice(0, 10);
+results.setAttribute("aria-busy", "false");
 
-const formatRange = (item) =>
-    `${item.s.toISOString().slice(0, 10)} -> ${item.e.toISOString().slice(0, 10)} (${item.l} días)`;
+const dateFormatter = new Intl.DateTimeFormat("es-CO", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+});
+
+const toIso = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
+const formatDateCompact = (date) => dateFormatter.format(date);
+
+const createDateTag = (date) => {
+    const time = document.createElement("time");
+    time.dateTime = toIso(date);
+    time.textContent = formatDateCompact(date);
+    return time;
+};
+
+const createStat = (label, value) => {
+    const stat = document.createElement("div");
+    stat.className = "result-stat";
+
+    const statValue = document.createElement("span");
+    statValue.className = "result-stat-value";
+    statValue.textContent = value;
+
+    const statLabel = document.createElement("span");
+    statLabel.className = "result-stat-label";
+    statLabel.textContent = label;
+
+    stat.append(statValue, statLabel);
+    return stat;
+};
+
+const renderValidationMessage = (message) => {
+    results.innerHTML = "";
+    const status = document.createElement("p");
+    status.className = "result-message";
+    status.textContent = message;
+    results.appendChild(status);
+};
+
+const renderMainResult = (item, vacationDays) => {
+    const hero = document.createElement("article");
+    hero.className = "result-hero";
+
+    const eyebrow = document.createElement("p");
+    eyebrow.className = "result-eyebrow";
+    eyebrow.textContent = "Mejor opción";
+
+    const range = document.createElement("p");
+    range.className = "result-range";
+    range.append(
+        createDateTag(item.s),
+        Object.assign(document.createElement("span"), {
+            className: "result-range-separator",
+            textContent: "→",
+        }),
+        createDateTag(item.e)
+    );
+
+    const stats = document.createElement("div");
+    stats.className = "result-stats";
+    const extraDays = Math.max(item.l - vacationDays, 0);
+    stats.append(
+        createStat("Descanso total", `${item.l} días`),
+        createStat("Vacaciones usadas", `${vacationDays} días`),
+        createStat("Días extra", `${extraDays} días`)
+    );
+
+    hero.append(eyebrow, range, stats);
+    results.appendChild(hero);
+};
+
+const renderSecondaryResults = (items, vacationDays) => {
+    if (!items.length) {
+        return;
+    }
+
+    const details = document.createElement("details");
+    details.className = "results-details";
+
+    const summary = document.createElement("summary");
+    summary.className = "results-summary";
+    summary.textContent = "Más resultados";
+    details.appendChild(summary);
+
+    const list = document.createElement("ol");
+    list.className = "results-list";
+
+    items.slice(0, 10).forEach((item) => {
+        const row = document.createElement("li");
+        row.className = "results-item";
+
+        const range = document.createElement("p");
+        range.className = "results-item-range";
+        range.append(
+            createDateTag(item.s),
+            Object.assign(document.createElement("span"), {
+                className: "result-range-separator",
+                textContent: "→",
+            }),
+            createDateTag(item.e)
+        );
+
+        const extraDays = Math.max(item.l - vacationDays, 0);
+        const meta = document.createElement("p");
+        meta.className = "results-item-meta";
+        meta.textContent = `${item.l} días de descanso · ${vacationDays} de vacaciones · ${extraDays} extra`;
+
+        row.append(range, meta);
+        list.appendChild(row);
+    });
+
+    details.appendChild(list);
+    results.appendChild(details);
+};
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -159,20 +280,20 @@ form.addEventListener("submit", async (event) => {
     const startDate = new Date(startInput.value);
     const endDate = new Date(endInput.value);
 
-    results.innerHTML = "";
-
     if (!vacationDays || Number.isNaN(vacationDays)) {
-        results.innerHTML = '<p class="result-empty">Ingresa un número válido de días.</p>';
+        renderValidationMessage("Ingresa un número válido de días.");
         return;
     }
 
     if (startDate > endDate) {
-        results.innerHTML = '<p class="result-empty">La fecha de inicio debe ser anterior a la fecha final.</p>';
+        renderValidationMessage("La fecha de inicio debe ser anterior a la fecha final.");
         return;
     }
 
+    results.innerHTML = "";
     submitBtn.disabled = true;
     submitBtn.textContent = "Calculando...";
+    results.setAttribute("aria-busy", "true");
 
     try {
         const years = [...Array(endDate.getFullYear() - startDate.getFullYear() + 1)].map(
@@ -243,35 +364,19 @@ form.addEventListener("submit", async (event) => {
         candidates.sort((a, b) => b.l - a.l || a.s - b.s);
 
         if (!candidates.length) {
-            results.innerHTML =
-                '<p class="result-empty">No encontramos combinaciones en ese rango. Prueba con otras fechas.</p>';
+            renderValidationMessage("No encontramos combinaciones en ese rango. Prueba con otras fechas.");
             return;
         }
 
-        const mainResult = document.createElement("div");
-        mainResult.className = "main-result";
-        mainResult.textContent = formatRange(candidates[0]);
-        results.appendChild(mainResult);
-
-        if (candidates.length > 1) {
-            const details = document.createElement("details");
-            details.className = "more-results";
-            const summary = document.createElement("summary");
-            summary.textContent = "Más resultados";
-            details.appendChild(summary);
-
-            candidates.slice(1, 11).forEach((item) => {
-                const line = document.createElement("div");
-                line.className = "extra-result";
-                line.textContent = formatRange(item);
-                details.appendChild(line);
-            });
-
-            results.appendChild(details);
-        }
+        results.innerHTML = "";
+        renderMainResult(candidates[0], vacationDays);
+        renderSecondaryResults(candidates.slice(1), vacationDays);
+    } catch (error) {
+        renderValidationMessage("No se pudo completar el cálculo en este momento. Intenta nuevamente.");
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Calcular";
+        results.setAttribute("aria-busy", "false");
     }
 });
 
@@ -593,49 +698,151 @@ body {
 }
 
 #results {
-    margin-top: 1.15rem;
+    margin-top: 1.25rem;
     display: grid;
-    gap: 0.7rem;
+    gap: 0.8rem;
     width: min(100%, 520px);
     margin-left: auto;
     margin-right: auto;
+    justify-items: stretch;
 }
 
-.main-result {
-    border: 1px solid var(--line);
-    border-radius: 0.85rem;
-    background: #ffffff;
-    padding: 0.8rem 0.9rem;
-    font-size: clamp(1.04rem, 2vw, 1.2rem);
+.result-hero {
+    display: grid;
+    gap: 0.9rem;
+    text-align: center;
+    border: 1px solid #cad6ee;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+    box-shadow: 0 14px 24px -22px #0b183a99;
+    padding: 1rem;
+}
+
+.result-eyebrow {
+    justify-self: center;
+    border: 1px solid #d6e0f4;
+    border-radius: 999px;
+    background: #f3f7ff;
+    padding: 0.18rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #2b4f92;
+}
+
+.result-range {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    color: #151c2d;
+    font-size: clamp(1rem, 2.2vw, 1.15rem);
     font-weight: 600;
 }
 
-.result-empty {
+.result-range time {
+    border: 1px solid #dde4f1;
+    border-radius: 0.6rem;
+    background: #ffffff;
+    padding: 0.35rem 0.6rem;
+}
+
+.result-range-separator {
+    color: #43629a;
+    font-weight: 700;
+}
+
+.result-stats {
+    display: grid;
+    gap: 0.55rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.result-stat {
+    display: grid;
+    gap: 0.15rem;
+    border: 1px solid #dce5f4;
+    border-radius: 0.7rem;
+    background: #f9fbff;
+    padding: 0.5rem 0.45rem;
+    text-align: center;
+}
+
+.result-stat-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #16233f;
+}
+
+.result-stat-label {
+    font-size: 0.76rem;
+    color: #516078;
+}
+
+.result-message {
     border: 1px dashed #c8d2ea;
-    border-radius: 0.85rem;
+    border-radius: 0.9rem;
     background: #f7f9fe;
-    padding: 0.8rem 0.9rem;
+    padding: 0.9rem;
     color: #39415a;
+    text-align: center;
     font-size: 0.95rem;
 }
 
-.more-results {
-    border: 1px solid #d9deeb;
-    border-radius: 0.85rem;
-    background: #fafcff;
-    padding: 0.7rem 0.9rem;
+.results-details {
+    border: 1px solid #d4dced;
+    border-radius: 0.9rem;
+    background: #fcfdff;
+    padding: 0.72rem 0.82rem 0.82rem;
 }
 
-.more-results summary {
+.results-summary {
     cursor: pointer;
     font-weight: 600;
-    color: #39415a;
+    color: #324567;
+    text-align: center;
+    list-style-position: inside;
 }
 
-.extra-result {
-    margin-top: 0.55rem;
-    font-size: 0.95rem;
-    color: #2f3544;
+.results-summary:focus-visible {
+    outline: 2px solid #1f66d8;
+    outline-offset: 2px;
+    border-radius: 0.35rem;
+}
+
+.results-list {
+    list-style: none;
+    margin: 0.72rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.results-item {
+    border: 1px solid #e0e6f2;
+    border-radius: 0.72rem;
+    background: #f8faff;
+    padding: 0.7rem 0.65rem;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.results-item-range {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a2740;
+}
+
+.results-item-meta {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #4a5870;
 }
 
 footer {
@@ -765,6 +972,14 @@ footer a {
         line-height: 1.55;
     }
 
+    .result-hero {
+        padding: 0.95rem 0.85rem;
+    }
+
+    .result-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     footer {
         padding: .9em 1rem;
         top: 93dvh;
@@ -775,6 +990,12 @@ footer a {
         padding-right: 15px;
         max-height: 10px;
         margin-top: 0;
+    }
+}
+
+@media (max-width: 460px) {
+    .result-stats {
+        grid-template-columns: 1fr;
     }
 }
 </style>
