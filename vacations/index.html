@@ -24,10 +24,7 @@
                     aria-label="Información sobre el formulario"
                     aria-describedby="formTooltip"
                 >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="7.5" r="1.2" />
-                        <path d="M12 11v6.5" />
-                    </svg>
+                    <span class="tooltip-icon" aria-hidden="true">?</span>
                 </button>
                 <span role="tooltip" id="formTooltip" class="tooltip-bubble"
                     >Esta herramienta calcula automáticamente cuándo tomar tus días de vacaciones para maximizar tu descanso, aprovechando festivos y fines de semana cercanos.</span
@@ -45,10 +42,7 @@
                                 aria-label="Ayuda sobre días de vacaciones"
                                 aria-describedby="vacDaysTooltip"
                             >
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <circle cx="12" cy="7.5" r="1.2" />
-                                    <path d="M12 11v6.5" />
-                                </svg>
+                                <span class="tooltip-icon" aria-hidden="true">?</span>
                             </button>
                             <span role="tooltip" id="vacDaysTooltip" class="field-tooltip-bubble"
                                 >Ingresa cuántos días hábiles de vacaciones quieres usar. Este número define cuántos días laborables tomará el optimizador para construir el mejor bloque de descanso.</span
@@ -67,10 +61,7 @@
                                 aria-label="Ayuda sobre fecha de inicio"
                                 aria-describedby="startTooltip"
                             >
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <circle cx="12" cy="7.5" r="1.2" />
-                                    <path d="M12 11v6.5" />
-                                </svg>
+                                <span class="tooltip-icon" aria-hidden="true">?</span>
                             </button>
                             <span role="tooltip" id="startTooltip" class="field-tooltip-bubble"
                                 >Selecciona la fecha inicial del rango de búsqueda. El cálculo solo evaluará combinaciones desde esta fecha en adelante.</span
@@ -89,10 +80,7 @@
                                 aria-label="Ayuda sobre fecha de fin"
                                 aria-describedby="endTooltip"
                             >
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <circle cx="12" cy="7.5" r="1.2" />
-                                    <path d="M12 11v6.5" />
-                                </svg>
+                                <span class="tooltip-icon" aria-hidden="true">?</span>
                             </button>
                             <span role="tooltip" id="endTooltip" class="field-tooltip-bubble"
                                 >Selecciona la fecha límite del rango de búsqueda. El cálculo solo evaluará combinaciones hasta esta fecha.</span
@@ -406,43 +394,58 @@ body {
     letter-spacing: -0.02em;
 }
 
-.tooltip-trigger {
+.tooltip-trigger,
+.field-tooltip-trigger {
     appearance: none;
     border: 0;
     background: transparent;
-    color: #6a7893;
-    width: 1.75rem;
-    height: 1.75rem;
+    color: inherit;
     padding: 0;
-    flex-shrink: 0;
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
     cursor: help;
-    transition: color 180ms ease, transform 180ms ease;
+    transition: opacity 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.tooltip-trigger {
+    width: 2rem;
+    height: 2rem;
+}
+
+.field-tooltip-trigger {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.tooltip-icon {
+    display: inline-block;
+    font-family: Int, sans-serif;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.tooltip-trigger .tooltip-icon {
+    font-size: 1.05rem;
+}
+
+.field-tooltip-trigger .tooltip-icon {
+    font-size: 0.92rem;
 }
 
 .tooltip-trigger:hover,
-.tooltip-trigger:focus-visible {
+.field-tooltip-trigger:hover {
     transform: translateY(-1px);
-    color: #1f4ca8;
-    outline: none;
+    opacity: 0.75;
 }
 
-.tooltip-trigger svg {
-    width: 14px;
-    height: 14px;
-}
-
-.tooltip-trigger svg path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-}
-
-.tooltip-trigger svg circle {
-    fill: currentColor;
+.tooltip-trigger:focus-visible,
+.field-tooltip-trigger:focus-visible {
+    transform: translateY(-1px);
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px #00000020;
 }
 
 .tooltip-bubble {
@@ -506,44 +509,6 @@ body {
     position: relative;
     display: inline-flex;
     align-items: center;
-}
-
-.field-tooltip-trigger {
-    appearance: none;
-    border: 0;
-    background: transparent;
-    color: #6a7893;
-    width: 1.25rem;
-    height: 1.25rem;
-    padding: 0;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    cursor: help;
-    transition: color 180ms ease, transform 180ms ease;
-}
-
-.field-tooltip-trigger:hover,
-.field-tooltip-trigger:focus-visible {
-    transform: translateY(-1px);
-    color: #1f4ca8;
-    outline: none;
-}
-
-.field-tooltip-trigger svg {
-    width: 11px;
-    height: 11px;
-}
-
-.field-tooltip-trigger svg path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-}
-
-.field-tooltip-trigger svg circle {
-    fill: currentColor;
 }
 
 .field-tooltip-bubble {
@@ -766,6 +731,24 @@ footer a {
     .title-wrap {
         align-items: flex-start;
         gap: 0.45rem;
+    }
+
+    .tooltip-trigger {
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+
+    .field-tooltip-trigger {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+
+    .tooltip-trigger .tooltip-icon {
+        font-size: 1.1rem;
+    }
+
+    .field-tooltip-trigger .tooltip-icon {
+        font-size: 0.92rem;
     }
 
     .tooltip-bubble {
