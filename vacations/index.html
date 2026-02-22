@@ -96,42 +96,46 @@
         </section>
     </main>
 
-    <footer>
-        <a class="footer__claps separator" id="claps" onclick="addLike()">
-            0
+    <footer class="vac-footer">
+        <a class="vac-footer__item vac-footer__item--divider vac-footer__item--claps" id="claps" onclick="addLike()">
+            <span class="vac-footer__count">0</span>
             <img
+                class="vac-footer__icon"
                 src="../assets/like.png"
                 alt="cheering icon"
-                width="20px"
-                height="20px"
+                width="20"
+                height="20"
             />
         </a>
         <a
-            class="footer__message separator"
+            class="vac-footer__item vac-footer__item--divider vac-footer__item--message"
             id="sm"
             href="https://www.sanetomore.com/"
         >
             <img
+                class="vac-footer__icon"
                 src="../assets/contact.png"
                 alt="contact icon"
-                width="20px"
-                height="20px"
+                width="20"
+                height="20"
             />
         </a>
-        <a class="footer__message separator" id="bf" href="../index.html">
+        <a class="vac-footer__item vac-footer__item--divider vac-footer__item--back" id="bf" href="../index.html">
             <img
+                class="vac-footer__icon vac-footer__icon--back"
                 src="../assets/back.png"
                 alt="back icon"
-                width="18px"
-                height="18px"
+                width="18"
+                height="18"
             />
         </a>
-        <a class="footer__list" id="fl" href="../all/index.html">
+        <a class="vac-footer__item vac-footer__item--list" id="fl" href="../all/index.html">
             <img
+                class="vac-footer__icon"
                 src="../assets/list.png"
                 alt="list icon"
-                width="20px"
-                height="20px"
+                width="20"
+                height="20"
             />
         </a>
     </footer>
@@ -380,7 +384,7 @@ form.addEventListener("submit", async (event) => {
     }
 });
 
-const p = '<img src="../assets/like.png" alt="cheering icon" width="20" height="20">';
+const p = '<img class="vac-footer__icon" src="../assets/like.png" alt="cheering icon" width="20" height="20">';
 const l = "https://likes.diafestivo.co";
 const d = document.getElementById("claps");
 
@@ -388,14 +392,14 @@ function addLike() {
     const e = Number(d.innerText) + 1;
     d.classList.add("jump");
     setTimeout(() => d.classList.remove("jump"), 200);
-    d.innerHTML = `${e} ${p}`;
+    d.innerHTML = `<span class="vac-footer__count">${e}</span> ${p}`;
     fetch(l, { method: "POST" });
 }
 
 fetch(l)
     .then((response) => response.text())
     .then((count) => {
-        d.innerHTML = `${count} ${p}`;
+        d.innerHTML = `<span class="vac-footer__count">${count}</span> ${p}`;
     });
 </script>
 <style>
@@ -437,6 +441,12 @@ fetch(l)
     padding: 0;
 }
 
+html,
+body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 body {
     min-height: 100vh;
     font-family: Mont, "Segoe UI", sans-serif;
@@ -446,11 +456,12 @@ body {
 }
 
 .main-container {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1.25rem 6.5rem;
+    padding: 1rem 1rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
 }
 
 .planner-card {
@@ -707,6 +718,11 @@ body {
     justify-items: stretch;
 }
 
+#results:not(:empty) {
+    padding-bottom: 1rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+}
+
 .result-hero {
     display: grid;
     gap: 0.9rem;
@@ -845,17 +861,20 @@ body {
     color: #4a5870;
 }
 
-footer {
+.vac-footer {
     z-index: 2;
     position: fixed;
     bottom: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
     right: 10px;
+    right: calc(10px + env(safe-area-inset-right));
     font-weight: 800;
     font-size: 1rem;
     border: 1px solid #000;
     border-radius: 1rem;
     padding: .3rem 1rem;
     display: flex;
+    align-items: center;
     gap: 1rem;
     min-height: 40px;
     max-height: 40px;
@@ -864,32 +883,46 @@ footer {
     box-shadow: var(--shadow-elevation-low);
 }
 
-footer a {
-    text-decoration: none;
-    color: #000;
-}
-
-.footer__calendar,
-.footer__claps,
-.footer__list,
-.footer__message {
+.vac-footer__item {
+    position: relative;
     display: flex;
-    gap: .5rem;
     align-items: center;
     justify-content: center;
+    gap: .5rem;
+    line-height: 1;
+    color: #000;
+    text-decoration: none;
 }
 
-.footer__calendar img,
-.footer__claps img,
-.footer__message img {
-    width: 20px;
-}
-
-.separator {
-    border-right: 1px solid #000;
+.vac-footer__item--divider {
     padding-right: 15px;
+}
+
+.vac-footer__item--divider::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 1px;
     height: 10px;
-    margin-top: 9px;
+    background: #000;
+    transform: translateY(-50%);
+}
+
+.vac-footer__count {
+    min-width: 1ch;
+    line-height: 1;
+    text-align: center;
+}
+
+.vac-footer__icon {
+    width: 20px;
+    height: 20px;
+}
+
+.vac-footer__icon--back {
+    width: 20px;
+    height: 20px;
 }
 
 @keyframes grow-shrink {
@@ -926,8 +959,11 @@ footer a {
 
 @media (max-width: 768px) {
     .main-container {
-        padding-top: 1.4rem;
-        padding-bottom: 6.6rem;
+        min-height: 100dvh;
+        align-items: center;
+        justify-content: center;
+        padding: .75rem .75rem;
+        padding-bottom: calc(.75rem + env(safe-area-inset-bottom));
     }
 
     .planner-card {
@@ -980,16 +1016,11 @@ footer a {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    footer {
-        padding: .9em 1rem;
-        top: 93dvh;
-    }
-
-    .separator {
-        border-right: 1px solid #000;
-        padding-right: 15px;
-        max-height: 10px;
-        margin-top: 0;
+    .vac-footer {
+        bottom: 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        right: 10px;
+        right: calc(10px + env(safe-area-inset-right));
     }
 }
 
