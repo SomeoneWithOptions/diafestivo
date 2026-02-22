@@ -285,7 +285,9 @@ const renderSecondaryResults = (items, vacationDays) => {
         const extraDays = Math.max(item.totalDays - vacationDays, 0);
         const meta = document.createElement("p");
         meta.className = "results-item-meta";
-        meta.textContent = `${item.totalDays} días de descanso · ${vacationDays} de vacaciones · ${extraDays} extra`;
+        const highlight = document.createElement("strong");
+        highlight.textContent = `${item.totalDays} días de descanso`;
+        meta.append(highlight, ` · ${vacationDays} de vacaciones · ${extraDays} extra`);
 
         row.append(range, meta);
         list.appendChild(row);
@@ -846,6 +848,11 @@ body {
     text-align: center;
     font-size: 0.8rem;
     color: #4a5870;
+}
+
+.results-item-meta strong {
+    font-weight: 700;
+    color: #1f2c45;
 }
 
 .vac-footer {
