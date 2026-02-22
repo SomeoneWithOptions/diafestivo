@@ -29,10 +29,12 @@ export const nextUtcDay = (date) => {
     return next;
 };
 
-export const isNonWorkingDay = (dateUtc, holidaySet) => {
+export const isNonWorkingDay = (dateUtc, holidaySet, includeSaturdays = true) => {
     const weekday = dateUtc.getUTCDay();
     const iso = toIsoUtc(dateUtc);
-    return weekday === 0 || weekday === 6 || holidaySet.has(iso);
+    const isSunday = weekday === 0;
+    const isSaturday = weekday === 6;
+    return isSunday || (includeSaturdays && isSaturday) || holidaySet.has(iso);
 };
 
 const buildUtcDateRange = (startIso, endIso) => {
@@ -47,17 +49,24 @@ const buildUtcDateRange = (startIso, endIso) => {
     return rangeDates;
 };
 
-const countWorkingDays = (rangeDates, holidaySet) =>
+const countWorkingDays = (rangeDates, holidaySet, includeSaturdays) =>
     rangeDates.reduce(
-        (count, day) => (isNonWorkingDay(day, holidaySet) ? count : count + 1),
+        (count, day) =>
+            (isNonWorkingDay(day, holidaySet, includeSaturdays) ? count : count + 1),
         0
     );
 
 /**
- * @param {{startIso: string, endIso: string, vacationDays: number, holidaySet: Set<string>}} params
+ * @param {{startIso: string, endIso: string, vacationDays: number, holidaySet: Set<string>, includeSaturdays?: boolean}} params
  * @returns {VacationCandidate[]}
  */
-export const computeCandidates = ({ startIso, endIso, vacationDays, holidaySet }) => {
+export const computeCandidates = ({
+    startIso,
+    endIso,
+    vacationDays,
+    holidaySet,
+    includeSaturdays = true,
+}) => {
     if (!Number.isInteger(vacationDays) || vacationDays <= 0) {
         return [];
     }
@@ -67,7 +76,7 @@ export const computeCandidates = ({ startIso, endIso, vacationDays, holidaySet }
     }
 
     const rangeDates = buildUtcDateRange(startIso, endIso);
-    if (countWorkingDays(rangeDates, holidaySet) < vacationDays) {
+    if (countWorkingDays(rangeDates, holidaySet, includeSaturdays) < vacationDays) {
         return [];
     }
 
@@ -75,7 +84,7 @@ export const computeCandidates = ({ startIso, endIso, vacationDays, holidaySet }
     const candidates = [];
 
     for (let index = 0; index < rangeDates.length; index++) {
-        if (isNonWorkingDay(rangeDates[index], holidaySet)) {
+        if (isNonWorkingDay(rangeDates[index], holidaySet, includeSaturdays)) {
             continue;
         }
 
@@ -83,7 +92,7 @@ export const computeCandidates = ({ startIso, endIso, vacationDays, holidaySet }
         let runner = index;
 
         for (; runner < rangeDates.length && usedDays < vacationDays; runner++) {
-            if (!isNonWorkingDay(rangeDates[runner], holidaySet)) {
+            if (!isNonWorkingDay(rangeDates[runner], holidaySet, includeSaturdays)) {
                 usedDays += 1;
             }
         }
@@ -97,14 +106,14 @@ export const computeCandidates = ({ startIso, endIso, vacationDays, holidaySet }
 
         while (
             startIndex > 0 &&
-            isNonWorkingDay(rangeDates[startIndex - 1], holidaySet)
+            isNonWorkingDay(rangeDates[startIndex - 1], holidaySet, includeSaturdays)
         ) {
             startIndex -= 1;
         }
 
         while (
             endIndex < rangeDates.length - 1 &&
-            isNonWorkingDay(rangeDates[endIndex + 1], holidaySet)
+            isNonWorkingDay(rangeDates[endIndex + 1], holidaySet, includeSaturdays)
         ) {
             endIndex += 1;
         }
