@@ -1,77 +1,798 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <meta
-            name="description"
-            content="Planificador que optimiza tus días de descanso en Colombia combinando festivos, fines de semana y vacaciones."
-        />
-        <link rel="icon" type="image/png" href="../assets/favicon.png" />
-        <title>Optimizador de Vacaciones</title>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+        name="description"
+        content="Planificador que optimiza tus días de descanso en Colombia combinando festivos, fines de semana y vacaciones."
+    />
+    <link rel="icon" type="image/png" href="../assets/favicon.png" />
+    <title>Optimizador de Vacaciones</title>
+</head>
 
-    </head>
+<body>
+    <main class="main-container">
+        <section class="planner-card">
+            <div class="top-accent" aria-hidden="true"></div>
+            <div class="title-wrap">
+                <h1 class="title-text">Optimizador de Vacaciones</h1>
+                <button
+                    type="button"
+                    class="tooltip-trigger"
+                    aria-label="Información sobre el formulario"
+                    aria-describedby="formTooltip"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="7.5" r="1.2" />
+                        <path d="M12 11v6.5" />
+                    </svg>
+                </button>
+                <span role="tooltip" id="formTooltip" class="tooltip-bubble"
+                    >Esta herramienta calcula automáticamente cuándo tomar tus días de vacaciones para maximizar tu descanso, aprovechando festivos y fines de semana cercanos.</span
+                >
+            </div>
 
-    <body>
-        <main class="main-container">
-            <h1 class="title-text">Optimizador de Vacaciones</h1>
-            <form id="vacForm">
-                <label
-                    >Días de vacaciones
-                    <input type="number" id="vacDays" min="1" required
-                /></label>
-                <label>Inicio <input type="date" id="start" /></label>
-                <label>Fin <input type="date" id="end" /></label>
-                <button type="submit">Calcular</button>
+            <form id="vacForm" class="vac-form">
+                <div class="form-field">
+                    <div class="field-label">
+                        <label for="vacDays">Días de vacaciones</label>
+                        <span class="field-tooltip">
+                            <button
+                                type="button"
+                                class="field-tooltip-trigger"
+                                aria-label="Ayuda sobre días de vacaciones"
+                                aria-describedby="vacDaysTooltip"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="7.5" r="1.2" />
+                                    <path d="M12 11v6.5" />
+                                </svg>
+                            </button>
+                            <span role="tooltip" id="vacDaysTooltip" class="field-tooltip-bubble"
+                                >Ingresa cuántos días hábiles de vacaciones quieres usar. Este número define cuántos días laborables tomará el optimizador para construir el mejor bloque de descanso.</span
+                            >
+                        </span>
+                    </div>
+                    <input type="number" id="vacDays" min="1" required aria-describedby="vacDaysTooltip" />
+                </div>
+                <div class="form-field">
+                    <div class="field-label">
+                        <label for="start">Inicio</label>
+                        <span class="field-tooltip">
+                            <button
+                                type="button"
+                                class="field-tooltip-trigger"
+                                aria-label="Ayuda sobre fecha de inicio"
+                                aria-describedby="startTooltip"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="7.5" r="1.2" />
+                                    <path d="M12 11v6.5" />
+                                </svg>
+                            </button>
+                            <span role="tooltip" id="startTooltip" class="field-tooltip-bubble"
+                                >Selecciona la fecha inicial del rango de búsqueda. El cálculo solo evaluará combinaciones desde esta fecha en adelante.</span
+                            >
+                        </span>
+                    </div>
+                    <input type="date" id="start" aria-describedby="startTooltip" />
+                </div>
+                <div class="form-field">
+                    <div class="field-label">
+                        <label for="end">Fin</label>
+                        <span class="field-tooltip">
+                            <button
+                                type="button"
+                                class="field-tooltip-trigger"
+                                aria-label="Ayuda sobre fecha de fin"
+                                aria-describedby="endTooltip"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="7.5" r="1.2" />
+                                    <path d="M12 11v6.5" />
+                                </svg>
+                            </button>
+                            <span role="tooltip" id="endTooltip" class="field-tooltip-bubble"
+                                >Selecciona la fecha límite del rango de búsqueda. El cálculo solo evaluará combinaciones hasta esta fecha.</span
+                            >
+                        </span>
+                    </div>
+                    <input type="date" id="end" aria-describedby="endTooltip" />
+                </div>
+                <button type="submit" class="submit-btn">Calcular</button>
             </form>
-            <div id="results"></div>
-        </main>
 
-        <footer>
-            <a class="footer__claps separator" id="claps" onclick="addLike()">
-                0
-                <img
-                    src="../assets/like.png"
-                    alt="cheering icon"
-                    width="20px"
-                    height="20px"
-                />
-            </a>
-            <a
-                class="footer__message separator"
-                id="sm"
-                href="https://www.sanetomore.com/"
-            >
-                <img
-                    src="../assets/contact.png"
-                    alt="contact icon"
-                    width="20px"
-                    height="20px"
-                />
-            </a>
-            <a class="footer__message separator" id="bf" href="../index.html">
-                <img
-                    src="../assets/back.png"
-                    alt="back icon"
-                    width="18px"
-                    height="18px"
-                />
-            </a>
-            <a class="footer__list" id="fl" href="../all/index.html">
-                <img
-                    src="../assets/list.png"
-                    alt="list icon"
-                    width="20px"
-                    height="20px"
-                />
-            </a>
-        </footer>
-    </body>
-    <script defer>
-    const today=new Date,sd=document.getElementById("start"),ed=document.getElementById("end"),y=today.getMonth()>9?today.getFullYear()+1:today.getFullYear();ed.value=`${y}-12-31`,sd.value=today.toISOString().slice(0,10),document.getElementById("vacForm").addEventListener("submit",async e=>{e.preventDefault();let t=parseInt(document.getElementById("vacDays").value,10),n=new Date(sd.value),a=new Date(ed.value),s=[...Array(a.getFullYear()-n.getFullYear()+1)].map((e,t)=>n.getFullYear()+t),i=new Set;for(let r of s){let o=await fetch(`https://api.diafestivo.co/make?year=${r}`).then(e=>e.json()).catch(()=>[]);(o.holidays||o).forEach(e=>{let t=new Date(e.date);t>=n&&t<=a&&i.add(t.toISOString().slice(0,10))})}let c=e=>e.getDay()>4||i.has(e.toISOString().slice(0,10)),g=[];for(let h=new Date(n);h<=a;h.setDate(h.getDate()+1))g.push(new Date(h));let _=[];for(let m=0;m<g.length;m++){if(c(g[m]))continue;let $=0,u=m;for(;u<g.length&&$<t;)!c(g[u])&&$++,u++;if($<t)break;let f=m,S=u-1;for(;f>0&&c(g[f-1]);)f--;for(;S<g.length-1&&c(g[S+1]);)S++;_.push({s:g[f],e:g[S],l:S-f+1})}_.sort((e,t)=>t.l-e.l||e.s-t.s);let v=document.getElementById("results");if(v.innerHTML="",_.length){let E=document.createElement("div");E.className="main-result";let I=_[0];if(E.textContent=`${I.s.toISOString().slice(0,10)} → ${I.e.toISOString().slice(0,10)} (${I.l} d\xedas)`,v.appendChild(E),_.length>1){let w=document.createElement("details"),x=document.createElement("summary");x.textContent="M\xe1s resultados",w.appendChild(x),_.slice(1,11).forEach(e=>{let t=document.createElement("div");t.textContent=`${e.s.toISOString().slice(0,10)} → ${e.e.toISOString().slice(0,10)} (${e.l} d\xedas)`,w.appendChild(t)}),v.appendChild(w)}}});const p='<img src="../assets/like.png" alt="cheering icon" width="20" height="20">',l="https://likes.diafestivo.co",d=document.getElementById("claps");function addLike(){let e=Number(d.innerText)+1;d.classList.add("jump"),setTimeout(()=>d.classList.remove("jump"),200),d.innerHTML=`${e} ${p}`,fetch(l,{method:"POST"})}fetch(l).then(e=>e.text()).then(e=>{d.innerHTML=`${e} ${p}`});
-    </script>
-    <style>
-    #results,h1{font-weight:600;text-align:center}body,footer{background:#fff}button,footer{cursor:pointer;box-shadow:var(--shadow-elevation-low)}@font-face{font-family:Int;font-weight:700;src:url("../assets/fonts/Inter-Bold.ttf") format("truetype");font-display:swap}@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-Regular.ttf") format("truetype");font-weight:400;font-display:swap}@font-face{font-family:Mont;src:url("../assets/fonts/Montserrat-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}:root{--shadow-color:0deg 0% 0%;--shadow-elevation-low:1px 1px 1.1px hsl(var(--shadow-color) / 0.47),5px 5px 5.3px -5px hsl(var(--shadow-color) / 0.23);--brand:#1976d2}*,::after,::before{box-sizing:border-box}*{margin:0;padding:0}p{overflow-wrap:break-word}body{font-family:Int;color:#000;line-height:1.4}.main-container{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:2rem;font-family:Int;font-weight:700;gap:2rem}form,label{flex-direction:column;display:flex}#results,.loading,button,footer,h1,input,label{font-family:Mont}h1{font-size:1.8rem}form{gap:1rem;width:100%;max-width:480px}label{font-weight:600;font-size:.95rem;gap:.4rem}button,input{padding:.8rem 1rem;font-size:1rem;border:1px solid #000;border-radius:.5rem}button{background:var(--brand);color:#fff;font-weight:600;transition:opacity .2s}button:hover{opacity:.9}#results{font-size:1.1rem;display:flex;flex-direction:column;gap:.7rem}.main-result{font-size:1.6rem;font-weight:700;max-width:20ch}details summary{cursor:pointer;margin-top:.5rem}details div{margin-top:.4rem}.loading{width:100vw;height:100vh;font-size:1.5rem;font-weight:600;display:none;justify-content:center;align-items:center}footer{z-index:2;position:fixed;bottom:10px;right:10px;font-weight:800;font-size:1rem;border:1px solid #000;border-radius:1rem;padding:.3rem 1rem;display:flex;gap:1rem;min-height:40px;max-height:40px}footer a{text-decoration:none;color:#000}.footer__calendar,.footer__claps,.footer__list,.footer__message{display:flex;gap:.5rem;align-items:center;justify-content:center}.footer__calendar img,.footer__claps img,.footer__message img{width:20px}.separator{border-right:1px solid #000;padding-right:15px;height:10px;margin-top:9px}.title-text{font-weight:700;font-size:clamp(3rem, 5vw, 5rem)}@keyframes grow-shrink{0%,100%{transform:scale(1)}25%,75%{transform:scale(1.1)}50%{transform:scale(1.3)}}.jump{animation:.3s forwards grow-shrink}@media (max-width:768px){.main-container{margin-left:0;margin-top:1rem;margin-bottom:1rem}footer{padding:.9em 1rem;top:93dvh}.separator{border-right:1px solid #000;padding-right:15px;max-height:10px;margin-top:0}#results{margin-bottom:2rem}}@media (min-width:768px){.main-container{padding-top:7rem;padding-bottom:7rem}}
-    </style>
+            <div id="results" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <footer>
+        <a class="footer__claps separator" id="claps" onclick="addLike()">
+            0
+            <img
+                src="../assets/like.png"
+                alt="cheering icon"
+                width="20px"
+                height="20px"
+            />
+        </a>
+        <a
+            class="footer__message separator"
+            id="sm"
+            href="https://www.sanetomore.com/"
+        >
+            <img
+                src="../assets/contact.png"
+                alt="contact icon"
+                width="20px"
+                height="20px"
+            />
+        </a>
+        <a class="footer__message separator" id="bf" href="../index.html">
+            <img
+                src="../assets/back.png"
+                alt="back icon"
+                width="18px"
+                height="18px"
+            />
+        </a>
+        <a class="footer__list" id="fl" href="../all/index.html">
+            <img
+                src="../assets/list.png"
+                alt="list icon"
+                width="20px"
+                height="20px"
+            />
+        </a>
+    </footer>
+</body>
+<script defer>
+const today = new Date();
+const startInput = document.getElementById("start");
+const endInput = document.getElementById("end");
+const form = document.getElementById("vacForm");
+const daysInput = document.getElementById("vacDays");
+const results = document.getElementById("results");
+const submitBtn = form.querySelector("button[type='submit']");
+
+const defaultYear = today.getMonth() > 9 ? today.getFullYear() + 1 : today.getFullYear();
+endInput.value = `${defaultYear}-12-31`;
+startInput.value = today.toISOString().slice(0, 10);
+
+const formatRange = (item) =>
+    `${item.s.toISOString().slice(0, 10)} -> ${item.e.toISOString().slice(0, 10)} (${item.l} días)`;
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const vacationDays = parseInt(daysInput.value, 10);
+    const startDate = new Date(startInput.value);
+    const endDate = new Date(endInput.value);
+
+    results.innerHTML = "";
+
+    if (!vacationDays || Number.isNaN(vacationDays)) {
+        results.innerHTML = '<p class="result-empty">Ingresa un número válido de días.</p>';
+        return;
+    }
+
+    if (startDate > endDate) {
+        results.innerHTML = '<p class="result-empty">La fecha de inicio debe ser anterior a la fecha final.</p>';
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Calculando...";
+
+    try {
+        const years = [...Array(endDate.getFullYear() - startDate.getFullYear() + 1)].map(
+            (_, index) => startDate.getFullYear() + index
+        );
+
+        const holidaySet = new Set();
+        for (const year of years) {
+            const data = await fetch(`https://api.diafestivo.co/make?year=${year}`)
+                .then((response) => response.json())
+                .catch(() => []);
+
+            (data.holidays || data).forEach((holiday) => {
+                const date = new Date(holiday.date);
+                if (date >= startDate && date <= endDate) {
+                    holidaySet.add(date.toISOString().slice(0, 10));
+                }
+            });
+        }
+
+        const isHolidayOrWeekend = (date) =>
+            date.getDay() > 4 || holidaySet.has(date.toISOString().slice(0, 10));
+
+        const rangeDates = [];
+        for (let day = new Date(startDate); day <= endDate; day.setDate(day.getDate() + 1)) {
+            rangeDates.push(new Date(day));
+        }
+
+        const candidates = [];
+        for (let index = 0; index < rangeDates.length; index++) {
+            if (isHolidayOrWeekend(rangeDates[index])) {
+                continue;
+            }
+
+            let usedDays = 0;
+            let runner = index;
+            for (; runner < rangeDates.length && usedDays < vacationDays; runner++) {
+                if (!isHolidayOrWeekend(rangeDates[runner])) {
+                    usedDays += 1;
+                }
+            }
+
+            if (usedDays < vacationDays) {
+                break;
+            }
+
+            let startIndex = index;
+            let endIndex = runner - 1;
+
+            while (startIndex > 0 && isHolidayOrWeekend(rangeDates[startIndex - 1])) {
+                startIndex -= 1;
+            }
+
+            while (
+                endIndex < rangeDates.length - 1 &&
+                isHolidayOrWeekend(rangeDates[endIndex + 1])
+            ) {
+                endIndex += 1;
+            }
+
+            candidates.push({
+                s: rangeDates[startIndex],
+                e: rangeDates[endIndex],
+                l: endIndex - startIndex + 1,
+            });
+        }
+
+        candidates.sort((a, b) => b.l - a.l || a.s - b.s);
+
+        if (!candidates.length) {
+            results.innerHTML =
+                '<p class="result-empty">No encontramos combinaciones en ese rango. Prueba con otras fechas.</p>';
+            return;
+        }
+
+        const mainResult = document.createElement("div");
+        mainResult.className = "main-result";
+        mainResult.textContent = formatRange(candidates[0]);
+        results.appendChild(mainResult);
+
+        if (candidates.length > 1) {
+            const details = document.createElement("details");
+            details.className = "more-results";
+            const summary = document.createElement("summary");
+            summary.textContent = "Más resultados";
+            details.appendChild(summary);
+
+            candidates.slice(1, 11).forEach((item) => {
+                const line = document.createElement("div");
+                line.className = "extra-result";
+                line.textContent = formatRange(item);
+                details.appendChild(line);
+            });
+
+            results.appendChild(details);
+        }
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Calcular";
+    }
+});
+
+const p = '<img src="../assets/like.png" alt="cheering icon" width="20" height="20">';
+const l = "https://likes.diafestivo.co";
+const d = document.getElementById("claps");
+
+function addLike() {
+    const e = Number(d.innerText) + 1;
+    d.classList.add("jump");
+    setTimeout(() => d.classList.remove("jump"), 200);
+    d.innerHTML = `${e} ${p}`;
+    fetch(l, { method: "POST" });
+}
+
+fetch(l)
+    .then((response) => response.text())
+    .then((count) => {
+        d.innerHTML = `${count} ${p}`;
+    });
+</script>
+<style>
+@font-face {
+    font-family: Mont;
+    src: url("../assets/fonts/Montserrat-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Mont;
+    src: url("../assets/fonts/Montserrat-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-display: swap;
+}
+
+:root {
+    --col-yellow: #f9dc4d;
+    --col-blue: #1e6cea;
+    --col-red: #d02f3a;
+    --ink: #101114;
+    --paper: #ffffff;
+    --paper-soft: #f5f7fb;
+    --line: #d9deea;
+    --shadow-color: 0deg 0% 0%;
+    --shadow-elevation-low: 1px 1px 1.1px hsl(var(--shadow-color) / 0.47),
+        5px 5px 5.3px -5px hsl(var(--shadow-color) / 0.23);
+}
+
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Mont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    line-height: 1.4;
+    background: radial-gradient(circle at 15% 20%, #ffffff 0%, #f5f8ff 60%, #eef2fb 100%);
+}
+
+.main-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.25rem 6.5rem;
+}
+
+.planner-card {
+    width: min(680px, 100%);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-elevation-low);
+    padding: 2rem;
+    position: relative;
+    overflow: visible;
+    animation: card-enter 650ms cubic-bezier(0.2, 1, 0.24, 1) both;
+}
+
+.top-accent {
+    width: 100%;
+    height: 4px;
+    margin-bottom: 1.25rem;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        var(--col-yellow) 0%,
+        var(--col-yellow) 33%,
+        var(--col-blue) 33%,
+        var(--col-blue) 66%,
+        var(--col-red) 66%,
+        var(--col-red) 100%
+    );
+}
+
+.title-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: min(100%, 520px);
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+
+.title-text {
+    font-size: clamp(1.8rem, 4.6vw, 2.6rem);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.tooltip-trigger {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #6a7893;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    flex-shrink: 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: help;
+    transition: color 180ms ease, transform 180ms ease;
+}
+
+.tooltip-trigger:hover,
+.tooltip-trigger:focus-visible {
+    transform: translateY(-1px);
+    color: #1f4ca8;
+    outline: none;
+}
+
+.tooltip-trigger svg {
+    width: 14px;
+    height: 14px;
+}
+
+.tooltip-trigger svg path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.tooltip-trigger svg circle {
+    fill: currentColor;
+}
+
+.tooltip-bubble {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    left: 50%;
+    display: block;
+    width: min(50ch, calc(100vw - 4rem));
+    max-width: calc(100% - 0.15rem);
+    padding: 0.85rem 0.95rem;
+    border: 1px solid #c9d3ea;
+    border-radius: 0.75rem;
+    background: #f8fbff;
+    color: #2a3344;
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.55;
+    box-shadow: 0 10px 30px -20px #0f1a364f;
+    opacity: 0;
+    transform: translate(-50%, -5px);
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 4;
+}
+
+.tooltip-trigger:hover + .tooltip-bubble,
+.tooltip-trigger:focus-visible + .tooltip-bubble,
+.tooltip-trigger:focus + .tooltip-bubble {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.vac-form {
+    display: grid;
+    gap: 0.9rem;
+    width: min(100%, 520px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-field {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.93rem;
+    font-weight: 600;
+    color: #31384a;
+}
+
+.field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.field-label label {
+    font: inherit;
+    color: inherit;
+}
+
+.field-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.field-tooltip-trigger {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #6a7893;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: help;
+    transition: color 180ms ease, transform 180ms ease;
+}
+
+.field-tooltip-trigger:hover,
+.field-tooltip-trigger:focus-visible {
+    transform: translateY(-1px);
+    color: #1f4ca8;
+    outline: none;
+}
+
+.field-tooltip-trigger svg {
+    width: 11px;
+    height: 11px;
+}
+
+.field-tooltip-trigger svg path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.field-tooltip-trigger svg circle {
+    fill: currentColor;
+}
+
+.field-tooltip-bubble {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: -0.2rem;
+    width: min(46ch, calc(100vw - 3rem));
+    padding: 0.75rem 0.85rem;
+    border: 1px solid #c9d3ea;
+    border-radius: 0.75rem;
+    background: #f8fbff;
+    color: #2a3344;
+    font-size: 0.84rem;
+    font-weight: 400;
+    line-height: 1.5;
+    box-shadow: 0 10px 30px -20px #0f1a364f;
+    opacity: 0;
+    transform: translateY(-5px);
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 4;
+}
+
+.field-tooltip:hover .field-tooltip-bubble,
+.field-tooltip:focus-within .field-tooltip-bubble {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-field input {
+    appearance: none;
+    border: 1px solid var(--line);
+    border-radius: 0.8rem;
+    background: var(--paper-soft);
+    padding: 0.82rem 0.95rem;
+    font-size: 1rem;
+    color: #151821;
+    font-family: inherit;
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.form-field:nth-of-type(1) input:focus {
+    box-shadow: 0 0 0 4px #f9dc4d40;
+}
+
+.form-field:nth-of-type(2) input:focus {
+    box-shadow: 0 0 0 4px #1e6cea2b;
+}
+
+.form-field:nth-of-type(3) input:focus {
+    box-shadow: 0 0 0 4px #d02f3a2b;
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: #97a6ca;
+    background: #ffffff;
+}
+
+.submit-btn {
+    margin-top: 0.3rem;
+    border: 1px solid #174ca0;
+    border-radius: 0.8rem;
+    background: linear-gradient(180deg, #2a73ea 0%, #1f66d8 100%);
+    color: #f9fbff;
+    padding: 0.88rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 180ms ease, filter 180ms ease;
+    box-shadow: var(--shadow-elevation-low);
+}
+
+.submit-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+}
+
+.submit-btn:disabled {
+    cursor: progress;
+    opacity: 0.88;
+}
+
+#results {
+    margin-top: 1.15rem;
+    display: grid;
+    gap: 0.7rem;
+    width: min(100%, 520px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main-result {
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: #ffffff;
+    padding: 0.8rem 0.9rem;
+    font-size: clamp(1.04rem, 2vw, 1.2rem);
+    font-weight: 600;
+}
+
+.result-empty {
+    border: 1px dashed #c8d2ea;
+    border-radius: 0.85rem;
+    background: #f7f9fe;
+    padding: 0.8rem 0.9rem;
+    color: #39415a;
+    font-size: 0.95rem;
+}
+
+.more-results {
+    border: 1px solid #d9deeb;
+    border-radius: 0.85rem;
+    background: #fafcff;
+    padding: 0.7rem 0.9rem;
+}
+
+.more-results summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #39415a;
+}
+
+.extra-result {
+    margin-top: 0.55rem;
+    font-size: 0.95rem;
+    color: #2f3544;
+}
+
+footer {
+    z-index: 2;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 1px solid #000;
+    border-radius: 1rem;
+    padding: .3rem 1rem;
+    display: flex;
+    gap: 1rem;
+    min-height: 40px;
+    max-height: 40px;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: var(--shadow-elevation-low);
+}
+
+footer a {
+    text-decoration: none;
+    color: #000;
+}
+
+.footer__calendar,
+.footer__claps,
+.footer__list,
+.footer__message {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer__calendar img,
+.footer__claps img,
+.footer__message img {
+    width: 20px;
+}
+
+.separator {
+    border-right: 1px solid #000;
+    padding-right: 15px;
+    height: 10px;
+    margin-top: 9px;
+}
+
+@keyframes grow-shrink {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    25%,
+    75% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+.jump {
+    animation: .3s forwards grow-shrink;
+}
+
+@keyframes card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding-top: 1.4rem;
+        padding-bottom: 6.6rem;
+    }
+
+    .planner-card {
+        padding: 1.35rem;
+        border-radius: 1rem;
+    }
+
+    .title-wrap {
+        align-items: flex-start;
+        gap: 0.45rem;
+    }
+
+    .tooltip-bubble {
+        width: min(42ch, calc(100vw - 3rem));
+        max-width: calc(100% - 0.1rem);
+        padding: 0.85rem 0.9rem;
+        font-size: 0.86rem;
+        line-height: 1.58;
+    }
+
+    .field-tooltip-bubble {
+        width: min(40ch, calc(100vw - 3rem));
+        font-size: 0.82rem;
+        line-height: 1.55;
+    }
+
+    footer {
+        padding: .9em 1rem;
+        top: 93dvh;
+    }
+
+    .separator {
+        border-right: 1px solid #000;
+        padding-right: 15px;
+        max-height: 10px;
+        margin-top: 0;
+    }
+}
+</style>
 </html>
