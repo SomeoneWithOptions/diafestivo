@@ -308,11 +308,22 @@ const renderSecondaryResults = (items, vacationDays) => {
         );
 
         const extraDays = Math.max(item.totalDays - vacationDays, 0);
-        const meta = document.createElement("p");
-        meta.className = "results-item-meta";
-        const highlight = document.createElement("strong");
-        highlight.textContent = `${item.totalDays} días de descanso`;
-        meta.append(highlight, ` · ${vacationDays} de vacaciones · ${extraDays} extra`);
+        const meta = document.createElement("div");
+        meta.className = "results-item-badges";
+        
+        const badgeTotal = document.createElement("span");
+        badgeTotal.className = "badge badge--total";
+        badgeTotal.textContent = `${item.totalDays} descanso`;
+        
+        const badgeVac = document.createElement("span");
+        badgeVac.className = "badge badge--vac";
+        badgeVac.textContent = `${vacationDays} vac.`;
+        
+        const badgeExtra = document.createElement("span");
+        badgeExtra.className = "badge badge--extra";
+        badgeExtra.textContent = `+${extraDays} extra`;
+
+        meta.append(badgeTotal, badgeVac, badgeExtra);
 
         row.append(range, meta);
         list.appendChild(row);
@@ -938,7 +949,31 @@ body {
     font-weight: 600;
     color: #324567;
     text-align: center;
-    list-style-position: inside;
+    list-style: none;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.results-summary::-webkit-details-marker {
+    display: none;
+}
+
+.results-summary::before {
+    content: "";
+    width: 1.1em;
+    height: 1.1em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23324567' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.2s ease;
+}
+
+details[open] > .results-summary::before {
+    transform: rotate(180deg);
 }
 
 .results-summary:focus-visible {
@@ -975,15 +1010,37 @@ body {
     color: #1a2740;
 }
 
-.results-item-meta {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #4a5870;
+.results-item-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+    margin-top: 0.2rem;
 }
 
-.results-item-meta strong {
-    font-weight: 700;
-    color: #1f2c45;
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+}
+
+.badge--total {
+    background: #eef2fb;
+    color: #2b4f92;
+    border: 1px solid #d6e0f4;
+}
+
+.badge--vac {
+    background: #f5f7fb;
+    color: #516078;
+    border: 1px solid #e0e6f2;
+}
+
+.badge--extra {
+    background: #ecfdf3;
+    color: #027a48;
+    border: 1px solid #abefc6;
 }
 
 .vac-footer {
@@ -1190,7 +1247,13 @@ body {
     }
 
     .result-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .result-stat:nth-child(3) {
+        grid-column: span 2;
+        width: 75%;
+        justify-self: center;
     }
 }
 </style>
