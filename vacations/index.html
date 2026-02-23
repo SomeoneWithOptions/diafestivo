@@ -31,7 +31,7 @@
                 >
             </div>
 
-            <form id="vacForm" class="vac-form">
+            <form id="vacForm" class="vac-form" novalidate>
                 <div class="form-field">
                     <div class="field-label">
                         <label for="vacDays">Días de vacaciones</label>
@@ -49,7 +49,7 @@
                             >
                         </span>
                     </div>
-                    <input type="number" id="vacDays" min="1" required aria-describedby="vacDaysTooltip" />
+                    <input type="number" id="vacDays" min="1" required aria-describedby="vacDaysTooltip" autocomplete="off" />
                 </div>
                 <div class="form-field">
                     <div class="field-label">
@@ -176,6 +176,17 @@ const includeSaturdaysInput = document.getElementById("includeSaturdays");
 const results = document.getElementById("results");
 const submitBtn = form.querySelector("button[type='submit']");
 
+daysInput.addEventListener("keydown", (e) => {
+    if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
+        e.preventDefault();
+    }
+});
+
+daysInput.addEventListener("input", () => {
+    daysInput.classList.remove("input-error");
+    daysInput.removeAttribute("aria-invalid");
+});
+
 const getTodayIsoInTimezone = (timeZone) => {
     const parts = new Intl.DateTimeFormat("en-CA", {
         timeZone,
@@ -201,6 +212,7 @@ const defaultYear =
 
 endInput.value = `${defaultYear}-12-31`;
 startInput.value = todayIso;
+daysInput.value = "";
 results.setAttribute("aria-busy", "false");
 
 const dateFormatter = new Intl.DateTimeFormat("es-CO", {
@@ -220,9 +232,12 @@ const createDateTag = (iso) => {
     return time;
 };
 
-const createStat = (label, value) => {
+const createStat = (label, value, theme = null) => {
     const stat = document.createElement("div");
     stat.className = "result-stat";
+    if (theme) {
+        stat.classList.add(`result-stat--${theme}`);
+    }
 
     const statValue = document.createElement("span");
     statValue.className = "result-stat-value";
@@ -236,10 +251,10 @@ const createStat = (label, value) => {
     return stat;
 };
 
-const renderValidationMessage = (message) => {
+const renderValidationMessage = (message, type = "error") => {
     results.innerHTML = "";
     const status = document.createElement("p");
-    status.className = "result-message";
+    status.className = `result-message result-message--${type}`;
     status.textContent = message;
     results.appendChild(status);
 };
@@ -267,9 +282,9 @@ const renderMainResult = (item, vacationDays) => {
     stats.className = "result-stats";
     const extraDays = Math.max(item.totalDays - vacationDays, 0);
     stats.append(
-        createStat("Descanso total", `${item.totalDays} días`),
+        createStat("Descanso total", `${item.totalDays} días`, "total"),
         createStat("Vacaciones usadas", `${vacationDays} días`),
-        createStat("Días extra", `${extraDays} días`)
+        createStat("Días extra", `${extraDays} días`, "extra")
     );
 
     hero.append(eyebrow, range, stats);
@@ -341,8 +356,10 @@ form.addEventListener("submit", async (event) => {
     const endIso = endInput.value;
     const includeSaturdays = includeSaturdaysInput.checked;
 
-    if (!vacationDays || Number.isNaN(vacationDays)) {
-        renderValidationMessage("Ingresa un número válido de días.");
+    if (!vacationDays || Number.isNaN(vacationDays) || vacationDays < 1) {
+        daysInput.classList.add("input-error");
+        daysInput.setAttribute("aria-invalid", "true");
+        renderValidationMessage("Ingresa un número válido de días mayor a 0.");
         return;
     }
 
@@ -389,7 +406,7 @@ form.addEventListener("submit", async (event) => {
         });
 
         if (!candidates.length) {
-            renderValidationMessage("No encontramos combinaciones en ese rango. Prueba con otras fechas.");
+            renderValidationMessage("No encontramos combinaciones en ese rango. Prueba con otras fechas.", "warning");
             return;
         }
 
@@ -397,7 +414,7 @@ form.addEventListener("submit", async (event) => {
         renderMainResult(candidates[0], vacationDays);
         renderSecondaryResults(candidates.slice(1), vacationDays);
     } catch (error) {
-        renderValidationMessage("No se pudo completar el cálculo en este momento. Intenta nuevamente.");
+        renderValidationMessage("No se pudo completar el cálculo en este momento. Intenta nuevamente.", "warning");
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Calcular";
@@ -729,6 +746,16 @@ body {
     background: #ffffff;
 }
 
+.form-field input[type="number"] {
+    text-align: center;
+}
+
+.input-error {
+    border-color: #d02f3a !important;
+    background-color: #fff0f1 !important;
+    box-shadow: 0 0 0 4px #d02f3a2b !important;
+}
+
 .saturday-option-label {
     font: inherit;
     color: inherit;
@@ -916,6 +943,32 @@ body {
     text-align: center;
 }
 
+.result-stat--extra {
+    background: #ecfdf3;
+    border-color: #abefc6;
+}
+
+.result-stat--extra .result-stat-value {
+    color: #027a48;
+}
+
+.result-stat--extra .result-stat-label {
+    color: #027a48;
+}
+
+.result-stat--total {
+    background: #eef2fb;
+    border-color: #d6e0f4;
+}
+
+.result-stat--total .result-stat-value {
+    color: #2b4f92;
+}
+
+.result-stat--total .result-stat-label {
+    color: #2b4f92;
+}
+
 .result-stat-value {
     font-size: 0.95rem;
     font-weight: 600;
@@ -935,6 +988,18 @@ body {
     color: #39415a;
     text-align: center;
     font-size: 0.95rem;
+}
+
+.result-message--error {
+    border: 1px solid #d02f3a;
+    background: #fff0f1;
+    color: #900b09;
+}
+
+.result-message--warning {
+    border: 1px solid #d4a72c;
+    background: #fffbe6;
+    color: #7a590f;
 }
 
 .results-details {
@@ -1223,6 +1288,15 @@ details[open] > .results-summary::before {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .result-stat:nth-child(3) {
+        grid-column: span 2;
+        width: max-content;
+        min-width: 45%;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        justify-self: center;
+    }
+
     .vac-footer {
         bottom: 10px;
         bottom: calc(10px + env(safe-area-inset-bottom));
@@ -1248,12 +1322,6 @@ details[open] > .results-summary::before {
 
     .result-stats {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    .result-stat:nth-child(3) {
-        grid-column: span 2;
-        width: 75%;
-        justify-self: center;
     }
 }
 </style>
