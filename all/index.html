@@ -36,6 +36,8 @@
         const likeIconHtml = '<img src="../assets/like.png" alt="cheering icon" width="20" height="20">';
         const likesUrl = "https://likes.diafestivo.co";
         const listUrl = "https://api.diafestivo.co/left";
+        const refreshIntervalMs = 144e5;
+        const refreshAfterHiddenMs = 36e5;
 
         const container = document.getElementById("main-container");
         const loading = document.getElementById("loading");
@@ -54,15 +56,45 @@
                 .then((t) => console.log(t));
         }
 
-        fetch(listUrl)
-            .then((r) => r.text())
-            .then((html) => {
-                loading.style.display = "none";
-                container.style.display = "block";
-                container.classList.add("animation__fade-in");
-                container.innerHTML = html;
-            })
-            .catch((err) => (container.innerHTML = err));
+        function loadList(forceRefresh = false) {
+            const options = forceRefresh ? { cache: "no-store" } : {};
+
+            return fetch(listUrl, options)
+                .then((r) => {
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    return r.text();
+                })
+                .then((html) => {
+                    loading.style.display = "none";
+                    container.style.display = "block";
+                    container.classList.add("animation__fade-in");
+
+                    const nextHtml = html.trim();
+                    if (container.innerHTML.trim() !== nextHtml) {
+                        container.innerHTML = nextHtml;
+                    }
+                })
+                .catch((err) => {
+                    console.error("Holiday list refresh failed:", err);
+                    if (!container.innerHTML.trim()) {
+                        loading.style.display = "none";
+                        container.style.display = "block";
+                        container.innerHTML = err;
+                    }
+                });
+        }
+
+        loadList();
+        setInterval(() => loadList(true), refreshIntervalMs);
+
+        let hiddenAt = Date.now();
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                hiddenAt = Date.now();
+            } else if (Date.now() - hiddenAt > refreshAfterHiddenMs) {
+                loadList(true);
+            }
+        });
 
         fetch(likesUrl)
             .then((r) => r.text())
