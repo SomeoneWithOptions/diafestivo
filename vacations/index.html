@@ -427,16 +427,24 @@ const l = "https://likes.diafestivo.co";
 const d = document.getElementById("claps");
 
 function addLike() {
-    const e = Number(d.innerText) + 1;
     d.classList.add("jump");
     setTimeout(() => d.classList.remove("jump"), 200);
-    d.innerHTML = `<span class="vac-footer__count">${e}</span> ${p}`;
-    fetch(l, { method: "POST" });
+    fetch(l, { method: "POST" })
+        .then((response) => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.text();
+        })
+        .then((count) => {
+            d.innerHTML = `<span class="vac-footer__count">${count}</span> ${p}`;
+        })
+        .catch((error) => {
+            console.error("Like update failed:", error);
+        });
 }
 
 window.addLike = addLike;
 
-fetch(l)
+fetch(l, { cache: "no-store" })
     .then((response) => response.text())
     .then((count) => {
         d.innerHTML = `<span class="vac-footer__count">${count}</span> ${p}`;
