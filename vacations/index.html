@@ -425,18 +425,33 @@ form.addEventListener("submit", async (event) => {
 const p = '<img class="vac-footer__icon" src="../assets/like.png" alt="cheering icon" width="20" height="20">';
 const l = "https://likes.diafestivo.co";
 const d = document.getElementById("claps");
+let latestLikeCount = 0;
+
+function playLikeAnimation() {
+    d.classList.remove("jump");
+    void d.offsetWidth;
+    d.classList.add("jump");
+}
+
+function setLikeCount(count) {
+    const numericCount = Number(count);
+    if (Number.isFinite(numericCount)) {
+        latestLikeCount = Math.max(latestLikeCount, numericCount);
+        d.innerHTML = `<span class="vac-footer__count">${latestLikeCount}</span> ${p}`;
+        return;
+    }
+
+    d.innerHTML = `<span class="vac-footer__count">${count}</span> ${p}`;
+}
 
 function addLike() {
-    d.classList.add("jump");
-    setTimeout(() => d.classList.remove("jump"), 200);
+    playLikeAnimation();
     fetch(l, { method: "POST" })
         .then((response) => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return response.text();
         })
-        .then((count) => {
-            d.innerHTML = `<span class="vac-footer__count">${count}</span> ${p}`;
-        })
+        .then(setLikeCount)
         .catch((error) => {
             console.error("Like update failed:", error);
         });
@@ -446,9 +461,7 @@ window.addLike = addLike;
 
 fetch(l, { cache: "no-store" })
     .then((response) => response.text())
-    .then((count) => {
-        d.innerHTML = `<span class="vac-footer__count">${count}</span> ${p}`;
-    });
+    .then(setLikeCount);
 </script>
 <style>
 @font-face {
@@ -1180,24 +1193,38 @@ details[open] > .results-summary::before {
     height: 18px;
 }
 
-@keyframes grow-shrink {
-    0%,
-    100% {
+@keyframes like-pop {
+    0% {
         transform: scale(1);
     }
 
-    25%,
-    75% {
-        transform: scale(1.1);
+    45% {
+        transform: scale(1.22);
     }
 
-    50% {
-        transform: scale(1.3);
+    100% {
+        transform: scale(1);
     }
 }
 
 .jump {
-    animation: .3s forwards grow-shrink;
+    animation: like-pop 180ms cubic-bezier(.2, 0, 0, 1) both;
+    transform-origin: center;
+    will-change: transform;
+}
+
+.vac-footer__item--claps:active {
+    transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .jump {
+        animation: none;
+    }
+
+    .vac-footer__item--claps:active {
+        transform: none;
+    }
 }
 
 @keyframes card-enter {

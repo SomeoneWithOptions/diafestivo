@@ -43,20 +43,34 @@
         const loading = document.getElementById("loading");
         const claps = document.getElementById("claps");
 
-        function addLike() {
+        let latestLikeCount = 0;
+
+        function playLikeAnimation() {
+            claps.classList.remove("jump");
+            void claps.offsetWidth;
             claps.classList.add("jump");
-            setTimeout(() => {
-                claps.classList.remove("jump");
-            }, 200);
+        }
+
+        function setLikeCount(count) {
+            const numericCount = Number(count);
+            if (Number.isFinite(numericCount)) {
+                latestLikeCount = Math.max(latestLikeCount, numericCount);
+                claps.innerHTML = `${latestLikeCount} ${likeIconHtml}`;
+                return;
+            }
+
+            claps.innerHTML = `${count} ${likeIconHtml}`;
+        }
+
+        function addLike() {
+            playLikeAnimation();
 
             fetch(likesUrl, { method: "POST" })
                 .then((r) => {
                     if (!r.ok) throw new Error(`HTTP ${r.status}`);
                     return r.text();
                 })
-                .then((count) => {
-                    claps.innerHTML = `${count} ${likeIconHtml}`;
-                })
+                .then(setLikeCount)
                 .catch((err) => {
                     console.error("Like update failed:", err);
                 });
@@ -104,9 +118,7 @@
 
         fetch(likesUrl, { cache: "no-store" })
             .then((r) => r.text())
-            .then((t) => {
-                claps.innerHTML = `${t} ${likeIconHtml}`;
-            })
+            .then(setLikeCount)
             .catch(() => (claps.innerHTML = `0 ${likeIconHtml}`));
     </script>
 
@@ -355,27 +367,38 @@
             width: 20px;
         }
 
-        @keyframes grow-shrink {
-
-            0%,
-            100% {
+        @keyframes like-pop {
+            0% {
                 transform: scale(1);
             }
 
-            25%,
-            75% {
-                transform: scale(1.1);
+            45% {
+                transform: scale(1.22);
             }
 
-            50% {
-                transform: scale(1.3);
+            100% {
+                transform: scale(1);
             }
         }
 
         .jump {
-            animation-name: grow-shrink;
-            animation-duration: 0.3s;
-            animation-fill-mode: forwards;
+            animation: like-pop 180ms cubic-bezier(.2, 0, 0, 1) both;
+            transform-origin: center;
+            will-change: transform;
+        }
+
+        .footer__claps:active {
+            transform: scale(0.96);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .jump {
+                animation: none;
+            }
+
+            .footer__claps:active {
+                transform: none;
+            }
         }
     </style>
 </body>
