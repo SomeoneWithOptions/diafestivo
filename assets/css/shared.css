@@ -1,0 +1,88 @@
+@font-face {
+    font-family: Mont;
+    src: url("../fonts/Montserrat-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Mont;
+    src: url("../fonts/Montserrat-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-display: swap;
+}
+
+:root {
+    --shadow-color: 0deg 0% 0%;
+    --shadow-elevation-low:
+        1px 1px 1.1px hsl(var(--shadow-color) / 0.47),
+        5px 5px 5.3px -5px hsl(var(--shadow-color) / 0.23);
+    --shadow-elevation-medium:
+        0.7px 0.6px 0.7px hsl(var(--shadow-color) / 0.33),
+        1.3px 1.2px 1.3px -1.7px hsl(var(--shadow-color) / 0.25),
+        5.4px 5.2px 5.6px -3.3px hsl(var(--shadow-color) / 0.16),
+        16.7px 16.2px 17.4px -5px hsl(var(--shadow-color) / 0.08);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+footer a {
+    text-decoration: none;
+    color: #000;
+}
+
+.separator {
+    border-right: 1px solid #000;
+    padding-right: 15px;
+    height: 10px;
+    margin-top: 9px;
+}
+
+.animation__fade-in {
+    animation: 1s ease-out forwards fadein;
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes like-pop {
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.22);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.jump {
+    animation: like-pop 180ms cubic-bezier(.2, 0, 0, 1) both;
+    transform-origin: center;
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .jump {
+        animation: none;
+    }
+}
